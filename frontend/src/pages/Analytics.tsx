@@ -1015,13 +1015,10 @@ export default function Analytics() {
           <div className="w-8 h-8 rounded bg-gradient-to-tr from-emerald-600 to-yellow-400 flex items-center justify-center shadow-md">
             <Leaf className="w-4.5 h-4.5 text-slate-950 stroke-[2.5]" />
           </div>
-          <div className="flex flex-col">
-            <h1 className="text-sm font-extrabold text-white tracking-wider uppercase flex items-center gap-2">
-              GreenTwin: Hydroponic Lettuce Digital Twin
+          <div className="flex flex-col justify-center">
+            <h1 className="text-sm font-black text-white tracking-wider uppercase">
+              GreenTwin: Lettuce Twin
             </h1>
-            <p className="text-[10px] text-slate-500 font-bold leading-normal mt-0.5">
-              Unified real-time NFT hydroponic control dashboard with custom LED lighting controls and individual macronutrient recipe sliders.
-            </p>
           </div>
         </div>
 
