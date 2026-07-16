@@ -10,6 +10,15 @@ import { assessLettuceConditions, LETTUCE_REFERENCE_RECIPE } from "../lib/lettuc
 
 const BACKEND_URL = "http://localhost:3001";
 
+const getTimelineProgressPercent = (age: number): number => {
+  if (age <= 0) return 0;
+  if (age <= 5) return (age / 5) * 25;
+  if (age <= 14) return 25 + ((age - 5) / (14 - 5)) * 25;
+  if (age <= 28) return 50 + ((age - 14) / (28 - 14)) * 25;
+  if (age <= 35) return 75 + ((age - 28) / (35 - 28)) * 25;
+  return 100;
+};
+
 export default function Analytics() {
   // Simulation States
   const [scenario, setScenario] = useState<string>("Normal Growth");
@@ -1213,7 +1222,7 @@ export default function Analytics() {
                       {/* Active Progress Fill */}
                       <div 
                         className="h-full bg-[#a3e635] rounded-full transition-all duration-500"
-                        style={{ width: `${Math.min(100, (metrics.age / 35) * 100)}%` }}
+                        style={{ width: `${Math.min(100, getTimelineProgressPercent(metrics.age))}%` }}
                       />
                     </div>
 
