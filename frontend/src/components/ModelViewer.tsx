@@ -504,27 +504,27 @@ export default function ModelViewer({ url = '/test.glb' }: ModelViewerProps) {
     <div 
       className={
         isFullscreen 
-          ? 'fixed inset-0 z-50 bg-[#606060] p-6 flex flex-col animate-in fade-in duration-200' 
-          : 'w-full h-full relative bg-[#606060] rounded-[24px] overflow-hidden border border-slate-700/80 shadow-sm'
+          ? 'fixed inset-0 z-50 bg-[#989898] p-6 flex flex-col animate-in fade-in duration-200' 
+          : 'w-full h-full relative bg-[#989898] rounded-[24px] overflow-hidden border border-slate-300/80 shadow-sm'
       }
     >
       {/* Title overlay in top-left corner */}
       <div className="absolute top-4 left-6 z-10 pointer-events-none select-none">
-        <h3 className="text-base font-semibold text-white tracking-wide flex items-center gap-2">
+        <h3 className="text-base font-semibold text-slate-800 tracking-wide flex items-center gap-2">
           <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
           3D Digital Twin View
         </h3>
-        <p className="text-xs text-slate-300 mt-0.5">Use mouse to rotate, pan, and zoom</p>
+        <p className="text-xs text-slate-500 mt-0.5">Use mouse to rotate, pan, and zoom</p>
       </div>
 
       {/* Sleek Controls Overlay in top-right corner */}
       <div className="absolute top-4 right-6 z-20 flex gap-2">
         <button
           onClick={() => setIsFlowing(!isFlowing)}
-          className={`flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl border shadow-sm backdrop-blur-md transition-all duration-200 cursor-pointer font-bold text-xs ${
+          className={`flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl border border-slate-300 shadow-sm backdrop-blur-md transition-all duration-200 cursor-pointer font-bold text-xs ${
             isFlowing
-              ? 'bg-red-500 hover:bg-red-600 text-white border-red-400/30'
-              : 'bg-white/15 hover:bg-white/25 text-white border-white/20'
+              ? 'bg-red-500 hover:bg-red-600 text-white'
+              : 'bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 border-slate-300'
           }`}
           title={isFlowing ? "Stop Water Pump" : "Start Water Pump"}
         >
@@ -534,7 +534,7 @@ export default function ModelViewer({ url = '/test.glb' }: ModelViewerProps) {
 
         <button
           onClick={() => setIsFullscreen(!isFullscreen)}
-          className="flex items-center justify-center p-2.5 rounded-xl border border-white/20 bg-white/15 hover:bg-white/25 text-white shadow-sm backdrop-blur-md transition-all duration-200 cursor-pointer"
+          className="flex items-center justify-center p-2.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 shadow-sm backdrop-blur-md transition-all duration-200 cursor-pointer"
           title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
         >
           {isFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
@@ -548,7 +548,7 @@ export default function ModelViewer({ url = '/test.glb' }: ModelViewerProps) {
           gl={{ antialias: true, preserveDrawingBuffer: true }}
           camera={{ position: [0, 2.5, 9], fov: 45 }}
         >
-          <color attach="background" args={['#606060']} />
+          <color attach="background" args={['#989898']} />
           
           <Suspense fallback={<Loader />}>
             <ModelContent url={url} isFlowing={isFlowing} />
