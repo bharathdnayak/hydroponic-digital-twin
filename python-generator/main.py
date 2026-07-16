@@ -12,10 +12,10 @@ def main():
     while True:
         current_time = time.time()
         
-        # Inject anomaly every 30 seconds
-        if current_time - last_anomaly_time > 30:
-            inject_anomaly()
-            last_anomaly_time = current_time
+        # Anomaly injection disabled to keep sensor data normal and stable
+        # if current_time - last_anomaly_time > 30:
+        #     inject_anomaly()
+        #     last_anomaly_time = current_time
             
         # 1. Update the state physics
         calculate_physics_tick()

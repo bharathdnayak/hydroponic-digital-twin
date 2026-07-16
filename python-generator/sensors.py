@@ -8,12 +8,12 @@ def initialize_state():
     for node in config.NODES:
         if node["type"] in ["tank", "central_tank"]:
             tank_state[node["id"]] = {
-                "ph": 6.35,
-                "tds": 920.0,
+                "ph": 6.2,
+                "tds": 700.0,
                 "turbidity": 12.0,
-                "water_temp": 22.4,
-                "air_temp": 28.7,
-                "light_intensity": 350.0,
+                "water_temp": 22.0,
+                "air_temp": 24.0,
+                "light_intensity": 250.0,
                 "status": "healthy"
             }
         elif node["type"] == "pump":
@@ -29,34 +29,31 @@ def calculate_physics_tick():
     for node_id, state in tank_state.items():
         if "ph" in state:
             # Drift for pH (Optimal: 6.0 - 6.5)
-            state["ph"] += random.uniform(-0.03, 0.03)
-            state["ph"] = max(5.5, min(7.5, state["ph"]))
+            state["ph"] += random.uniform(-0.02, 0.02)
+            state["ph"] = max(6.0, min(6.5, state["ph"]))
 
-            # Drift for TDS (Optimal: 800 - 1200)
-            state["tds"] += random.uniform(-10.0, 10.0)
-            state["tds"] = max(400.0, min(1800.0, state["tds"]))
+            # Drift for TDS (Optimal for Lettuce: 560 - 840 ppm, centering at 700)
+            state["tds"] += random.uniform(-5.0, 5.0)
+            state["tds"] = max(650.0, min(750.0, state["tds"]))
 
             # Drift for Turbidity (Good: <50 NTU)
-            state["turbidity"] += random.uniform(-1.0, 1.0)
-            state["turbidity"] = max(5.0, min(80.0, state["turbidity"]))
+            state["turbidity"] += random.uniform(-0.5, 0.5)
+            state["turbidity"] = max(5.0, min(20.0, state["turbidity"]))
 
             # Drift for Water Temp (Optimal: 20 - 24°C)
-            state["water_temp"] += random.uniform(-0.15, 0.15)
-            state["water_temp"] = max(18.0, min(28.0, state["water_temp"]))
+            state["water_temp"] += random.uniform(-0.1, 0.1)
+            state["water_temp"] = max(21.0, min(23.0, state["water_temp"]))
 
             # Drift for Air Temp (Optimal: 22 - 28°C)
-            state["air_temp"] += random.uniform(-0.2, 0.2)
-            state["air_temp"] = max(20.0, min(35.0, state["air_temp"]))
+            state["air_temp"] += random.uniform(-0.15, 0.15)
+            state["air_temp"] = max(22.0, min(26.0, state["air_temp"]))
 
-            # Drift for Light Intensity
-            state["light_intensity"] += random.uniform(-15.0, 15.0)
-            state["light_intensity"] = max(100.0, min(1000.0, state["light_intensity"]))
+            # Drift for Light Intensity (Optimal: 220 - 280)
+            state["light_intensity"] += random.uniform(-5.0, 5.0)
+            state["light_intensity"] = max(220.0, min(280.0, state["light_intensity"]))
 
-            # Status evaluation based on new alert rules
-            if state["ph"] < 5.8 or state["ph"] > 6.8 or state["tds"] < 700.0 or state["tds"] > 1300.0 or state["water_temp"] > 25.0:
-                state["status"] = "warning"
-            else:
-                state["status"] = "healthy"
+            # Status is always healthy as the values are tightly controlled within normal bounds
+            state["status"] = "healthy"
 
 def get_payloads():
     """Generates the hydroponic flat JSON payload array."""
