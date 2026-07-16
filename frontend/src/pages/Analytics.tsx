@@ -1471,51 +1471,99 @@ export default function Analytics() {
                     </span>
                   </div>
  
-                  <div className="grid grid-cols-2 gap-3 text-xs text-slate-300 font-mono">
+                  <div className="grid grid-cols-2 gap-2 text-xs text-slate-300 font-mono">
                     {/* pH Probe */}
-                    <div className="bg-[#14151b] p-3 rounded-lg border border-slate-900 flex flex-col justify-between min-h-[64px]">
+                    <div className="bg-[#14151b] p-2.5 rounded-lg border border-slate-900 flex flex-col justify-between min-h-[60px]">
                       <div className="flex justify-between items-start">
-                        <span className="text-slate-550 text-[10px] uppercase font-bold">pH</span>
+                        <span className="text-slate-550 text-[10px] uppercase font-bold">pH Sensor</span>
                         <span className="text-[9px] text-slate-650 font-bold">pH</span>
                       </div>
-                      <span className="text-xl font-black text-white mt-1.5">{reservoir.pH.toFixed(2)}</span>
-                      <div className="w-full bg-slate-950 h-1.5 rounded overflow-hidden mt-1.5">
+                      <span className="text-lg font-black text-white mt-1">{reservoir.pH.toFixed(2)}</span>
+                      <div className="w-full bg-slate-950 h-1 rounded overflow-hidden mt-1.5">
                         <div className="bg-blue-500 h-full animate-[pulse_2s_infinite]" style={{ width: `${Math.min(100, (reservoir.pH / 14) * 100)}%` }} />
                       </div>
                     </div>
- 
-                    {/* EC Probe */}
-                    <div className="bg-[#14151b] p-3 rounded-lg border border-slate-900 flex flex-col justify-between min-h-[64px]">
+
+                    {/* TDS Probe */}
+                    <div className="bg-[#14151b] p-2.5 rounded-lg border border-slate-900 flex flex-col justify-between min-h-[60px]">
+                      <div className="flex justify-between items-start">
+                        <span className="text-slate-550 text-[10px] uppercase font-bold">TDS Sensor</span>
+                        <span className="text-[9px] text-slate-655 font-bold">ppm</span>
+                      </div>
+                      <span className="text-lg font-black text-white mt-1">{reservoir.tds}</span>
+                      <div className="w-full bg-slate-950 h-1 rounded overflow-hidden mt-1.5">
+                        <div className="bg-cyan-500 h-full" style={{ width: `${Math.min(100, (reservoir.tds / 2000) * 100)}%` }} />
+                      </div>
+                    </div>
+
+                    {/* Solute EC Probe */}
+                    <div className="bg-[#14151b] p-2.5 rounded-lg border border-slate-900 flex flex-col justify-between min-h-[60px]">
                       <div className="flex justify-between items-start">
                         <span className="text-slate-550 text-[10px] uppercase font-bold">Solute EC</span>
                         <span className="text-[9px] text-slate-655 font-bold">mS/cm</span>
                       </div>
-                      <span className="text-xl font-black text-white mt-1.5">{reservoir.ec.toFixed(2)}</span>
-                      <div className="w-full bg-slate-950 h-1.5 rounded overflow-hidden mt-1.5">
+                      <span className="text-lg font-black text-white mt-1">{reservoir.ec.toFixed(2)}</span>
+                      <div className="w-full bg-slate-950 h-1 rounded overflow-hidden mt-1.5">
                         <div className="bg-cyan-400 h-full" style={{ width: `${Math.min(100, (reservoir.ec / 3.0) * 100)}%` }} />
                       </div>
                     </div>
- 
-                    {/* Turbidity */}
-                    <div className="bg-[#14151b] p-3 rounded-lg border border-slate-900 flex flex-col justify-between min-h-[64px]">
+
+                    {/* Water Temp */}
+                    <div className="bg-[#14151b] p-2.5 rounded-lg border border-slate-900 flex flex-col justify-between min-h-[60px]">
                       <div className="flex justify-between items-start">
-                        <span className="text-slate-550 text-[10px] uppercase font-bold">Turbidity</span>
+                        <span className="text-slate-550 text-[10px] uppercase font-bold">Water Temp</span>
+                        <span className="text-[9px] text-slate-655 font-bold">°C</span>
+                      </div>
+                      <span className="text-lg font-black text-white mt-1">{environmentalStats.waterTemp.toFixed(1)}</span>
+                      <div className="w-full bg-slate-950 h-1 rounded overflow-hidden mt-1.5">
+                        <div className="bg-teal-400 h-full" style={{ width: `${Math.min(100, (environmentalStats.waterTemp / 40) * 100)}%` }} />
+                      </div>
+                    </div>
+
+                    {/* Air Temp */}
+                    <div className="bg-[#14151b] p-2.5 rounded-lg border border-slate-900 flex flex-col justify-between min-h-[60px]">
+                      <div className="flex justify-between items-start">
+                        <span className="text-slate-555 text-[10px] uppercase font-bold">Air Temp</span>
+                        <span className="text-[9px] text-slate-655 font-bold">°C</span>
+                      </div>
+                      <span className="text-lg font-black text-white mt-1">{environmentalStats.airTemp.toFixed(1)}</span>
+                      <div className="w-full bg-slate-950 h-1 rounded overflow-hidden mt-1.5">
+                        <div className="bg-amber-400 h-full" style={{ width: `${Math.min(100, (environmentalStats.airTemp / 45) * 100)}%` }} />
+                      </div>
+                    </div>
+
+                    {/* Light Lux */}
+                    <div className="bg-[#14151b] p-2.5 rounded-lg border border-slate-900 flex flex-col justify-between min-h-[60px]">
+                      <div className="flex justify-between items-start">
+                        <span className="text-slate-555 text-[10px] uppercase font-bold">Light Lux</span>
+                        <span className="text-[9px] text-slate-655 font-bold">Lux</span>
+                      </div>
+                      <span className="text-lg font-black text-white mt-1">{Math.round(environmentalStats.ledIntensity * 54).toLocaleString()}</span>
+                      <div className="w-full bg-slate-950 h-1 rounded overflow-hidden mt-1.5">
+                        <div className="bg-yellow-500 h-full" style={{ width: `${Math.min(100, ((environmentalStats.ledIntensity * 54) / 21600) * 100)}%` }} />
+                      </div>
+                    </div>
+
+                    {/* Turbidity */}
+                    <div className="bg-[#14151b] p-2.5 rounded-lg border border-slate-900 flex flex-col justify-between min-h-[60px]">
+                      <div className="flex justify-between items-start">
+                        <span className="text-slate-555 text-[10px] uppercase font-bold">Turbidity</span>
                         <span className="text-[9px] text-slate-655 font-bold">NTU</span>
                       </div>
-                      <span className="text-xl font-black text-white mt-1.5">{currentTurbidity.toFixed(1)}</span>
-                      <div className="w-full bg-slate-950 h-1.5 rounded overflow-hidden mt-1.5">
+                      <span className="text-lg font-black text-white mt-1">{currentTurbidity.toFixed(1)}</span>
+                      <div className="w-full bg-slate-950 h-1 rounded overflow-hidden mt-1.5">
                         <div className="bg-orange-500 h-full" style={{ width: `${Math.min(100, (currentTurbidity / 12) * 100)}%` }} />
                       </div>
                     </div>
- 
-                    {/* PAR Light intensity */}
-                    <div className="bg-[#14151b] p-3 rounded-lg border border-slate-900 flex flex-col justify-between min-h-[64px]">
+
+                    {/* Light PPFD */}
+                    <div className="bg-[#14151b] p-2.5 rounded-lg border border-slate-900 flex flex-col justify-between min-h-[60px]">
                       <div className="flex justify-between items-start">
-                        <span className="text-slate-550 text-[10px] uppercase font-bold">Light PPFD</span>
+                        <span className="text-slate-555 text-[10px] uppercase font-bold">Light PPFD</span>
                         <span className="text-[9px] text-slate-655 font-bold">µmol</span>
                       </div>
-                      <span className="text-xl font-black text-white mt-1.5">{environmentalStats.ledIntensity}</span>
-                      <div className="w-full bg-slate-950 h-1.5 rounded overflow-hidden mt-1.5">
+                      <span className="text-lg font-black text-white mt-1">{environmentalStats.ledIntensity}</span>
+                      <div className="w-full bg-slate-950 h-1 rounded overflow-hidden mt-1.5">
                         <div className="bg-yellow-400 h-full" style={{ width: `${Math.min(100, (environmentalStats.ledIntensity / 400) * 100)}%` }} />
                       </div>
                     </div>
