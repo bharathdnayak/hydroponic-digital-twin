@@ -223,7 +223,7 @@ export default function ControlsPanel({
       </div>
 
       {controlTab === "Scenarios" && (
-        <div className="flex flex-col space-y-4.5 flex-grow min-h-0 py-1" id="tab-scenarios-panel">
+        <div className="flex flex-col space-y-4.5 shrink-0 py-1" id="tab-scenarios-panel">
           {/* SIMULATION SCENARIO SELECT */}
           <div className="flex flex-col space-y-2.5 bg-slate-900/40 p-5 rounded-lg border border-slate-900 shrink-0">
             <label className="text-xs text-slate-400 font-extrabold uppercase tracking-wider">
@@ -622,7 +622,7 @@ export default function ControlsPanel({
       )}
 
       {controlTab === "Days" && (
-        <div className="flex flex-col space-y-4 bg-slate-900/20 p-4 rounded-lg border border-slate-900 overflow-y-auto flex-grow min-h-0" id="tab-days-panel">
+        <div className="flex flex-col space-y-4 bg-slate-900/20 p-4 rounded-lg border border-slate-900 overflow-y-auto shrink-0" id="tab-days-panel">
           <div className="flex justify-between items-center border-b border-slate-950 pb-2.5 mb-1.5 shrink-0">
             <span className="text-xs text-yellow-500 font-black uppercase tracking-wide">
               Simulated Time & Crop Age
@@ -759,26 +759,26 @@ export default function ControlsPanel({
       </div>
 
       {/* Accumulated simulation telemetry readout */}
-      <div className="bg-[#12141c]/60 p-3 rounded-lg border border-slate-900 flex flex-col space-y-2 mt-auto" id="accumulated-ledger">
-        <span className="text-[9.5px] text-yellow-500 font-bold uppercase tracking-wider">
+      <div className="bg-[#12141c]/60 p-3.5 rounded-lg border border-slate-900 flex flex-col space-y-3 mt-auto flex-grow flex-1" id="accumulated-ledger">
+        <span className="text-xs text-yellow-500 font-extrabold uppercase tracking-wider">
           Resources Accumulated Ledger
         </span>
-        <div className="grid grid-cols-2 gap-y-2.5 gap-x-4 text-[10.5px] text-slate-400" id="ledger-stats">
-          <div>
-            <span className="text-slate-550 text-[8.5px] uppercase font-bold">Water Absorbed</span>
-            <span className="text-slate-200 font-black block mt-0.5 text-xs">{waterUptake.toFixed(2)} L</span>
+        <div className="grid grid-cols-2 gap-3.5 flex-1" id="ledger-stats">
+          <div className="bg-slate-950/45 p-3 rounded-lg border border-slate-900/60 flex flex-col justify-between min-h-[64px]">
+            <span className="text-slate-550 text-[9px] uppercase font-extrabold tracking-wider">Water Absorbed</span>
+            <span className="text-white font-black text-sm mt-1">💧 {waterUptake.toFixed(2)} L</span>
           </div>
-          <div>
-            <span className="text-slate-550 text-[8.5px] uppercase font-bold">Minerals Fed</span>
-            <span className="text-slate-200 font-black block mt-0.5 text-xs">{nutrientsFed.toFixed(2)} g</span>
+          <div className="bg-slate-950/45 p-3 rounded-lg border border-slate-900/60 flex flex-col justify-between min-h-[64px]">
+            <span className="text-slate-550 text-[9px] uppercase font-extrabold tracking-wider">Minerals Fed</span>
+            <span className="text-white font-black text-sm mt-1">🧪 {nutrientsFed.toFixed(2)} g</span>
           </div>
-          <div>
-            <span className="text-slate-550 text-[8.5px] uppercase font-bold">Net Growth Rate</span>
-            <span className="text-emerald-400 font-black block mt-0.5 text-xs">+{metrics.growthRate.toFixed(2)}%</span>
+          <div className="bg-slate-950/45 p-3 rounded-lg border border-slate-900/60 flex flex-col justify-between min-h-[64px]">
+            <span className="text-slate-550 text-[9px] uppercase font-extrabold tracking-wider">Net Growth Rate</span>
+            <span className="text-emerald-400 font-black text-sm mt-1">📈 +{metrics.growthRate.toFixed(2)}%</span>
           </div>
-          <div>
-            <span className="text-slate-550 text-[8.5px] uppercase font-bold">Harvest Horizon</span>
-            <span className="text-slate-200 font-black block mt-0.5 text-xs">{harvestDays.toFixed(1)} Days</span>
+          <div className="bg-slate-950/45 p-3 rounded-lg border border-slate-900/60 flex flex-col justify-between min-h-[64px]">
+            <span className="text-slate-550 text-[9px] uppercase font-extrabold tracking-wider">Harvest Horizon</span>
+            <span className="text-slate-200 font-black text-sm mt-1">⏱️ {harvestDays.toFixed(1)} Days</span>
           </div>
         </div>
       </div>
