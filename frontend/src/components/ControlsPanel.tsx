@@ -223,16 +223,16 @@ export default function ControlsPanel({
       </div>
 
       {controlTab === "Scenarios" && (
-        <div className="flex flex-col space-y-4 flex-grow min-h-0 py-1" id="tab-scenarios-panel">
+        <div className="flex flex-col space-y-4.5 flex-grow min-h-0 py-1" id="tab-scenarios-panel">
           {/* SIMULATION SCENARIO SELECT */}
-          <div className="flex flex-col space-y-2 bg-slate-900/40 p-4 rounded-lg border border-slate-900 shrink-0">
-            <label className="text-[11px] text-slate-400 font-bold uppercase tracking-wider">
+          <div className="flex flex-col space-y-2.5 bg-slate-900/40 p-5 rounded-lg border border-slate-900 shrink-0">
+            <label className="text-xs text-slate-400 font-extrabold uppercase tracking-wider">
               Anomalies & Scenarios
             </label>
             <select
               value={scenario}
               onChange={(e) => onScenarioChange(e.target.value)}
-              className="w-full bg-[#14151c] text-slate-100 border border-slate-800 rounded-lg px-3 py-2 focus:outline-none focus:border-emerald-500 text-xs font-extrabold"
+              className="w-full bg-[#14151c] text-slate-100 border border-slate-800 rounded-lg px-3 py-2.5 focus:outline-none focus:border-emerald-500 text-sm font-extrabold"
               id="select-scenario"
             >
               <option value="Normal Growth">Normal Growth (Baseline)</option>
@@ -240,28 +240,34 @@ export default function ControlsPanel({
               <option value="Algae Bloom">Algae Bloom (Microbiology)</option>
               <option value="Pump Failure">Pump Failure (Circulation Cut)</option>
             </select>
-            <p className="text-[10px] text-slate-500 leading-normal mt-1 italic">
+            <p className="text-xs text-slate-500 leading-relaxed mt-1.5 italic">
               {getScenarioDescription(scenario)}
             </p>
           </div>
 
           {/* PLANT GROWTH STAGE SELECT */}
-          <div className="flex flex-col space-y-2 bg-slate-900/40 p-4 rounded-lg border border-slate-900 shrink-0">
-            <label className="text-[11px] text-slate-400 font-bold uppercase tracking-wider">
+          <div className="flex flex-col space-y-2.5 bg-slate-900/40 p-5 rounded-lg border border-slate-900 shrink-0">
+            <label className="text-xs text-slate-400 font-extrabold uppercase tracking-wider">
               Plant Growth Stage
             </label>
-            <div className="grid grid-cols-2 gap-1.5" id="stage-buttons-grid">
+            <div className="grid grid-cols-2 gap-2" id="stage-buttons-grid">
               {(["Germination", "Seedling", "Vegetative", "Mature"] as const).map((stg) => (
                 <button
                   key={stg}
                   onClick={() => onStageChange(stg)}
-                  className={`py-2 px-3 rounded-lg font-bold text-[10px] border transition-colors cursor-pointer shrink-0 ${
+                  className={`py-2 px-2.5 rounded-lg font-bold border text-left flex flex-col justify-between h-16 transition-all cursor-pointer ${
                     growthStage === stg
-                      ? "bg-slate-900 text-[#a3e635] border-[#a3e635]/30"
-                      : "bg-[#14151b] text-slate-450 border-slate-950 hover:text-slate-200"
+                      ? "bg-slate-950 border-[#a3e635] text-[#a3e635] shadow-[0_0_8px_rgba(163,230,53,0.2)]"
+                      : "bg-[#14151b] border-slate-900 text-slate-400 hover:text-slate-200"
                   }`}
                 >
-                  {stg}
+                  <span className="font-extrabold text-[11px]">{stg}</span>
+                  <span className="text-[9px] text-slate-500 font-normal leading-tight">
+                    {stg === "Germination" && "Cotyledon sprout (Day 0-5)"}
+                    {stg === "Seedling" && "Root elongation (Day 5-14)"}
+                    {stg === "Vegetative" && "Rapid leafing (Day 14-28)"}
+                    {stg === "Mature" && "Harvest ready (Day 28+)"}
+                  </span>
                 </button>
               ))}
             </div>
