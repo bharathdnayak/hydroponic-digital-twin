@@ -1046,7 +1046,7 @@ export default function Analytics() {
         {/* COLUMN 1: INTERACTIVE SIMULATOR SIDEBAR */}
         <section className="xl:col-span-3 flex flex-col space-y-2.5 min-h-0 h-full overflow-y-auto pr-1 animate-fade-in" id="controls-panel-container">
           {/* Simulation Control Card */}
-          <div className="bg-[#111217]/50 border border-slate-900 rounded-lg p-2.5 flex flex-col shrink-0">
+          <div className="bg-[#111217]/50 border border-slate-900 rounded-lg p-2.5 flex flex-col flex-grow flex-1">
             <ControlsPanel
               scenario={scenario}
               onScenarioChange={handleScenarioChange}
@@ -1080,30 +1080,6 @@ export default function Analytics() {
               onTurbidityChange={setTurbidity}
               onFiveHourJump={handleFiveHourJump}
             />
-          </div>
-
-          {/* Growth Potential Card */}
-          <div className="bg-[#12141c]/60 border border-slate-900 rounded-lg p-4 flex flex-col justify-between shrink-0" id="growth-potential-card">
-            <span className="text-[11px] text-slate-500 font-extrabold uppercase tracking-wider">Growth Potential</span>
-            <strong className="mt-1 block text-3xl font-black text-white">
-              {Math.round(lettuceAssessment.growthFactor * 100)}<span className="text-xs font-normal text-slate-500">%</span>
-            </strong>
-          </div>
-
-          {/* Solution Strength Card */}
-          <div className="bg-[#12141c]/60 border border-slate-900 rounded-lg p-4 flex flex-col justify-between shrink-0" id="solution-strength-card">
-            <span className="text-[11px] text-slate-500 font-extrabold uppercase tracking-wider">Solution Strength</span>
-            <strong className="mt-1 block text-3xl font-black text-white">
-              {Math.round(lettuceAssessment.solutionStrength * 100)}<span className="text-xs font-normal text-slate-500">% full</span>
-            </strong>
-          </div>
-
-          {/* Antioxidant Focus Card */}
-          <div className="bg-[#12141c]/60 border border-slate-900 rounded-lg p-4 flex flex-col justify-between shrink-0" id="antioxidant-focus-card">
-            <span className="text-[11px] text-slate-500 font-extrabold uppercase tracking-wider">Antioxidant Focus</span>
-            <strong className="mt-1 block text-3xl font-black text-white">
-              {Math.round(lettuceAssessment.antioxidantFactor * 100)}<span className="text-xs font-normal text-slate-500">%</span>
-            </strong>
           </div>
         </section>
 
@@ -1547,6 +1523,30 @@ export default function Analytics() {
                       </div>
                     </div>
                   </div>
+                </div>
+
+                {/* Growth Potential Card */}
+                <div className="bg-[#12141c]/60 border border-slate-900 rounded-lg p-4 flex flex-col justify-between shrink-0" id="growth-potential-card">
+                  <span className="text-[11px] text-slate-500 font-extrabold uppercase tracking-wider">Growth Potential</span>
+                  <strong className="mt-1 block text-3xl font-black text-white">
+                    {Math.round(lettuceAssessment.growthFactor * 100)}<span className="text-xs font-normal text-slate-500">%</span>
+                  </strong>
+                </div>
+
+                {/* Solution Strength Card */}
+                <div className="bg-[#12141c]/60 border border-slate-900 rounded-lg p-4 flex flex-col justify-between shrink-0" id="solution-strength-card">
+                  <span className="text-[11px] text-slate-500 font-extrabold uppercase tracking-wider">Solution Strength</span>
+                  <strong className="mt-1 block text-3xl font-black text-white">
+                    {Math.round(lettuceAssessment.solutionStrength * 100)}<span className="text-xs font-normal text-slate-500">% full</span>
+                  </strong>
+                </div>
+
+                {/* Antioxidant Focus Card */}
+                <div className="bg-[#12141c]/60 border border-slate-900 rounded-lg p-4 flex flex-col justify-between shrink-0" id="antioxidant-focus-card">
+                  <span className="text-[11px] text-slate-500 font-extrabold uppercase tracking-wider">Antioxidant Focus</span>
+                  <strong className="mt-1 block text-3xl font-black text-white">
+                    {Math.round(lettuceAssessment.antioxidantFactor * 100)}<span className="text-xs font-normal text-slate-500">%</span>
+                  </strong>
                 </div>
  
                 {/* Timeline Console */}
