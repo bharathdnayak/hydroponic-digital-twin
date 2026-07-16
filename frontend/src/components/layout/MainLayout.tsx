@@ -337,7 +337,8 @@ function TelemetryPanel({ selectedNode, history, useGrafana, dark, nodes }: Tele
   };
 
   const getGrafanaIframe = (panelId: number, title: string) => {
-    const iframeSrc = `http://127.0.0.1:3000/d-solo/adc2nlg/testing?orgId=1&panelId=${panelId}&theme=${dark ? 'dark' : 'light'}`;
+    const grafanaHost = import.meta.env.VITE_GRAFANA_URL || 'http://localhost:3000';
+    const iframeSrc = `${grafanaHost}/d-solo/adc2nlg/testing?orgId=1&panelId=${panelId}&theme=${dark ? 'dark' : 'light'}`;
     return (
       <div
         key={panelId}
@@ -622,7 +623,8 @@ function KPIDashboardPanel({ selectedNode, nodes, useGrafana, dark, liveLogs }: 
   };
 
   const getGrafanaIframe = (panelId: number, title: string) => {
-    const iframeSrc = `http://127.0.0.1:3000/d-solo/adc2nlg/testing?orgId=1&panelId=${panelId}&theme=${dark ? 'dark' : 'light'}`;
+    const grafanaHost = import.meta.env.VITE_GRAFANA_URL || 'http://localhost:3000';
+    const iframeSrc = `${grafanaHost}/d-solo/adc2nlg/testing?orgId=1&panelId=${panelId}&theme=${dark ? 'dark' : 'light'}`;
     return (
       <div
         key={panelId}

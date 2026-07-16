@@ -1,0 +1,217 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "datasource",
+          "uid": "grafana"
+        },
+        "enable": true,
+        "hide": true,
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 1,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "id": 1,
+      "title": "pH Level",
+      "type": "timeseries",
+      "datasource": {
+        "type": "postgres",
+        "uid": "PostgreSQL"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "PostgreSQL"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT sr.created_at AS \"time\", sr.value::float AS \"value\" FROM sensor_readings sr JOIN sensors s ON sr.sensor_id = s.id WHERE s.sensor_name = 'pH Sensor' ORDER BY sr.created_at",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "TDS Level",
+      "type": "timeseries",
+      "datasource": {
+        "type": "postgres",
+        "uid": "PostgreSQL"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "PostgreSQL"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT sr.created_at AS \"time\", sr.value::float AS \"value\" FROM sensor_readings sr JOIN sensors s ON sr.sensor_id = s.id WHERE s.sensor_name = 'EC Sensor' OR s.sensor_name = 'TDS Sensor' ORDER BY sr.created_at",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Turbidity",
+      "type": "timeseries",
+      "datasource": {
+        "type": "postgres",
+        "uid": "PostgreSQL"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "PostgreSQL"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT sr.created_at AS \"time\", sr.value::float AS \"value\" FROM sensor_readings sr JOIN sensors s ON sr.sensor_id = s.id WHERE s.sensor_name = 'Turbidity Sensor' ORDER BY sr.created_at",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Water Temp",
+      "type": "timeseries",
+      "datasource": {
+        "type": "postgres",
+        "uid": "PostgreSQL"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "PostgreSQL"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT sr.created_at AS \"time\", sr.value::float AS \"value\" FROM sensor_readings sr JOIN sensors s ON sr.sensor_id = s.id WHERE s.sensor_name = 'Water Temp Sensor' ORDER BY sr.created_at",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "Air Temp / Water Quality",
+      "type": "timeseries",
+      "datasource": {
+        "type": "postgres",
+        "uid": "PostgreSQL"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "PostgreSQL"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT sr.created_at AS \"time\", sr.value::float AS \"value\" FROM sensor_readings sr JOIN sensors s ON sr.sensor_id = s.id WHERE s.sensor_name = 'Air Temp Sensor' ORDER BY sr.created_at",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "title": "Light Intensity / Flow",
+      "type": "timeseries",
+      "datasource": {
+        "type": "postgres",
+        "uid": "PostgreSQL"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "PostgreSQL"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT sr.created_at AS \"time\", sr.value::float AS \"value\" FROM sensor_readings sr JOIN sensors s ON sr.sensor_id = s.id WHERE s.sensor_name = 'Lux Sensor' OR s.sensor_name = 'Light PPFD Sensor' ORDER BY sr.created_at",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "title": "Nutrient Quality Index",
+      "type": "timeseries",
+      "datasource": {
+        "type": "postgres",
+        "uid": "PostgreSQL"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "PostgreSQL"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT sr.created_at AS \"time\", sr.value::float AS \"value\" FROM sensor_readings sr JOIN sensors s ON sr.sensor_id = s.id WHERE s.sensor_name = 'EC Sensor' OR s.sensor_name = 'TDS Sensor' ORDER BY sr.created_at",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "title": "System Health",
+      "type": "timeseries",
+      "datasource": {
+        "type": "postgres",
+        "uid": "PostgreSQL"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "PostgreSQL"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT sr.created_at AS \"time\", sr.value::float AS \"value\" FROM sensor_readings sr JOIN sensors s ON sr.sensor_id = s.id WHERE s.sensor_name = 'Water Temp Sensor' ORDER BY sr.created_at",
+          "refId": "A"
+        }
+      ]
+    }
+  ],
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Testing",
+  "uid": "adc2nlg",
+  "version": 1,
+  "weekStart": ""
+}
