@@ -7,8 +7,6 @@ interface ControlsPanelProps {
   onScenarioChange: (scenario: string) => void;
   growthStage: string;
   onStageChange: (stage: "Germination" | "Seedling" | "Vegetative" | "Mature") => void;
-  cropType: string;
-  onCropChange: (crop: string) => void;
   isRunning: boolean;
   onToggleRunning: () => void;
   onReset: () => void;
@@ -47,8 +45,6 @@ export default function ControlsPanel({
   onScenarioChange,
   growthStage,
   onStageChange,
-  cropType,
-  onCropChange,
   isRunning,
   onToggleRunning,
   onReset,
@@ -269,23 +265,6 @@ export default function ControlsPanel({
                 </button>
               ))}
             </div>
-          </div>
-
-          {/* CROP TYPE SELECT */}
-          <div className="flex flex-col space-y-2 bg-slate-900/40 p-4 rounded-lg border border-slate-900 shrink-0">
-            <label className="text-[11px] text-slate-400 font-bold uppercase tracking-wider">
-              Crop Species
-            </label>
-            <select
-              value={cropType}
-              onChange={(e) => onCropChange(e.target.value)}
-              className="w-full bg-[#14151c] text-slate-100 border border-slate-800 rounded-lg px-3 py-2 focus:outline-none focus:border-emerald-500 text-xs font-extrabold"
-              id="select-crop-type"
-            >
-              <option value="Lettuce">Green Coral Lettuce (L. sativa)</option>
-              <option value="Basil">Genovese Sweet Basil (O. basilicum)</option>
-              <option value="Spinach">Bloomsdale Spinach (S. oleracea)</option>
-            </select>
           </div>
         </div>
       )}

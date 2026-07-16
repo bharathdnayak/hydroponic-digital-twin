@@ -6,6 +6,7 @@ import TelemetryPanel from "../components/TelemetryPanel";
 import DiagnosticsPanel from "../components/DiagnosticsPanel";
 import ChatPanel from "../components/ChatPanel";
 import type { LettuceEnvironmentalStats, ReservoirStats, LettuceMetrics, TelemetryPoint, ChatMessage, DiagnosticReport, NutrientSolution } from "../types";
+import { assessLettuceConditions, LETTUCE_REFERENCE_RECIPE } from "../lib/lettuceModel";
 
 const BACKEND_URL = "http://localhost:3001";
 
@@ -27,7 +28,7 @@ export default function Analytics() {
 
   // Core Environmental States
   const [environmentalStats, setEnvironmentalStats] = useState<LettuceEnvironmentalStats>({
-    ledIntensity: 225,
+    ledIntensity: 350,
     photoperiod: 16,
     pumpSpeed: 100,
     flowRate: 1.5,
@@ -41,18 +42,7 @@ export default function Analytics() {
 
   // Detailed Macronutrient Solutes State (ppm)
   const [nutrients, setNutrients] = useState<NutrientSolution>({
-    nitrogen: 150,
-    phosphorus: 50,
-    potassium: 200,
-    calcium: 150,
-    magnesium: 50,
-    sulfur: 64,
-    iron: 4.5,
-    manganese: 0.5,
-    boron: 0.5,
-    zinc: 0.05,
-    copper: 0.02,
-    molybdenum: 0.01,
+    ...LETTUCE_REFERENCE_RECIPE,
   });
 
   // Reservoir States
@@ -141,57 +131,12 @@ export default function Analytics() {
 
   // Map currentTurbidity to refer directly to turbidity state for seamless UI updates
   const currentTurbidity = turbidity;
+  const lettuceAssessment = useMemo(
+    () => assessLettuceConditions(environmentalStats, reservoir),
+    [environmentalStats, reservoir],
+  );
 
-  // Derived physiological properties for specs
-  const leafColor = useMemo(() => {
-    if (metrics.health <= 5) return "Rotten (Necrotic)";
-    if (metrics.health <= 15) return "Decayed Brown";
-    if (metrics.health < 40) return "Chlorotic Yellow";
-    if (reservoir.pH > 6.6) return "Pale (Iron Lockout)";
-    if (reservoir.ec < 0.9) return "Lime Green (Underfed)";
-    if (reservoir.ec > 2.2) return "Deep Forest Green (Salt Excess)";
-    return "Vibrant Emerald";
-  }, [metrics.health, reservoir.pH, reservoir.ec]);
 
-  const stressLevel = useMemo(() => {
-    let baseStress = 5;
-    if (scenario === "Tipburn Risk") baseStress += 25;
-    if (scenario === "Algae Bloom") baseStress += 15;
-    if (scenario === "Pump Failure") baseStress += 75;
-    
-    // Direct pH stress
-    if (reservoir.pH < 4.5 || reservoir.pH > 8.0) baseStress += 40;
-    else if (reservoir.pH < 5.5 || reservoir.pH > 6.5) baseStress += 15;
-    
-    // Direct Air Temp stress
-    if (environmentalStats.airTemp > 30) baseStress += (environmentalStats.airTemp - 30) * 4;
-    else if (environmentalStats.airTemp < 15) baseStress += (15 - environmentalStats.airTemp) * 3;
-    
-    // Direct Water Temp stress
-    if (environmentalStats.waterTemp > 24) baseStress += (environmentalStats.waterTemp - 24) * 5;
-    else if (environmentalStats.waterTemp < 15) baseStress += (15 - environmentalStats.waterTemp) * 3;
-    
-    // Direct TDS/EC stress (underfed vs overfed)
-    if (reservoir.ec < 0.8) baseStress += (0.8 - reservoir.ec) * 30;
-    else if (reservoir.ec > 2.2) baseStress += (reservoir.ec - 2.2) * 25;
-    
-    // Direct Light intensity stress (photo-inhibition)
-    if (environmentalStats.ledIntensity > 320) baseStress += (environmentalStats.ledIntensity - 320) * 0.15;
-    
-    // Direct Turbidity stress (roots suffocation / block)
-    if (turbidity > 6.0) baseStress += (turbidity - 6.0) * 4;
-
-    return Math.max(0, Math.min(100, Math.round(baseStress)));
-  }, [scenario, reservoir.pH, reservoir.ec, environmentalStats.airTemp, environmentalStats.waterTemp, environmentalStats.ledIntensity, turbidity]);
-
-  const rootHealth = useMemo(() => {
-    let baseRoot = 99;
-    if (environmentalStats.waterTemp > 24) baseRoot -= (environmentalStats.waterTemp - 24) * 8;
-    if (environmentalStats.waterTemp < 14) baseRoot -= (14 - environmentalStats.waterTemp) * 4;
-    if (scenario === "Pump Failure") baseRoot -= Math.min(90, Math.floor(simMinutes / 15) * 5);
-    if (turbidity > 6.0) baseRoot -= (turbidity - 6.0) * 5; // turbidity coats roots!
-    return Math.max(5, Math.min(100, Math.round(baseRoot)));
-  }, [environmentalStats.waterTemp, scenario, simMinutes, turbidity]);
 
   // Active deficiencies evaluation
   const activeDeficiencies = useMemo(() => {
@@ -320,20 +265,7 @@ export default function Analytics() {
 
   // Reset Nutrients Formula
   const handleResetNutrients = () => {
-    const baseNutrients: NutrientSolution = {
-      nitrogen: 150,
-      phosphorus: 50,
-      potassium: 200,
-      calcium: 150,
-      magnesium: 50,
-      sulfur: 64,
-      iron: 4.5,
-      manganese: 0.5,
-      boron: 0.5,
-      zinc: 0.05,
-      copper: 0.02,
-      molybdenum: 0.01,
-    };
+    const baseNutrients: NutrientSolution = { ...LETTUCE_REFERENCE_RECIPE };
     setNutrients(baseNutrients);
     setReservoir((prevRes) => ({
       ...prevRes,
@@ -342,7 +274,7 @@ export default function Analytics() {
     }));
     setTimeline((prev) => [
       ...prev,
-      `[${formattedClock}] Nutrients reset: Solutes restored to standard lettuce recipe (EC ~1.4 mS/cm).`
+      `[${formattedClock}] Nutrients reset: Restored the supplied study's reference recipe; reservoir remains at 3/4-strength (EC ~1.4 mS/cm).`
     ]);
   };
 
@@ -357,7 +289,7 @@ export default function Analytics() {
         waterTemp: 21.0,
         airTemp: 23.0,
         humidity: 60,
-        ledIntensity: 225,
+        ledIntensity: 350,
         flowRate: 1.5,
         pumpSpeed: 100,
         targetEC: 1.4,
@@ -652,27 +584,14 @@ export default function Analytics() {
     });
 
     // Reset macronutrient solution recipe
-    setNutrients({
-      nitrogen: 150,
-      phosphorus: 50,
-      potassium: 200,
-      calcium: 150,
-      magnesium: 50,
-      sulfur: 64,
-      iron: 4.5,
-      manganese: 0.5,
-      boron: 0.5,
-      zinc: 0.05,
-      copper: 0.02,
-      molybdenum: 0.01,
-    });
+    setNutrients({ ...LETTUCE_REFERENCE_RECIPE });
 
     setGrowthStage("Vegetative");
     setScenario("Normal Growth");
 
     setTimeline([
       "[00:00] Simulation clock reset. Re-calibrating physical models...",
-      "[00:00] Hydroponic parameters established at baseline configurations (95.0L, balanced nutrients)."
+      "[00:00] Hydroponic parameters established at baseline configurations (95.0 L, 350 PPFD, 3/4-strength reference solution)."
     ]);
   };
 
@@ -767,8 +686,7 @@ export default function Analytics() {
         }
 
         let growthMultiplier = nextHealth / 100;
-        const lightFactor = Math.min(1.2, environmentalStats.ledIntensity / 225);
-        growthMultiplier *= lightFactor;
+        growthMultiplier *= lettuceAssessment.growthFactor * 1.2;
 
         if (environmentalStats.airTemp > 28) {
           growthMultiplier *= Math.max(0.2, 1 - (environmentalStats.airTemp - 28) * 0.05);
@@ -963,9 +881,8 @@ export default function Analytics() {
             // Height and freshBiomass increments based on health, light, and air temp
             let growthMultiplier = nextHealth / 100;
             
-            // Optimal light factor peaking around 220-280 PPFD
-            const lightFactor = Math.min(1.2, environmentalStats.ledIntensity / 225);
-            growthMultiplier *= lightFactor;
+            // Light and nutrient solution interact; calibrated to the supplied study.
+            growthMultiplier *= lettuceAssessment.growthFactor * 1.2;
 
             // Heat penalty
             if (environmentalStats.airTemp > 28) {
@@ -1127,42 +1044,67 @@ export default function Analytics() {
       <main style={{ flex: 1, minHeight: 0 }} className="w-full mx-auto p-2.5 lg:p-3.5 grid grid-cols-1 xl:grid-cols-12 gap-3 min-h-0 overflow-hidden">
         
         {/* COLUMN 1: INTERACTIVE SIMULATOR SIDEBAR */}
-        <section className="xl:col-span-3 bg-[#111217]/50 border border-slate-900 rounded-lg p-2.5 flex flex-col justify-between min-h-0 overflow-y-auto animate-fade-in" id="controls-panel-container">
-          <ControlsPanel
-            scenario={scenario}
-            onScenarioChange={handleScenarioChange}
-            growthStage={growthStage}
-            onStageChange={handleStageChange}
-            cropType={cropType}
-            onCropChange={handleCropChange}
-            isRunning={isRunning}
-            onToggleRunning={() => setIsRunning(!isRunning)}
-            onReset={handleReset}
-            speed={speed}
-            onSpeedChange={setSpeed}
-            realTime={realTime}
-            onRealTimeToggle={() => setRealTime(!realTime)}
-            autoCorrect={autoCorrect}
-            onAutoCorrectToggle={() => setAutoCorrect(!autoCorrect)}
-            metrics={metrics}
-            harvestDays={Math.max(1.0, 28 - metrics.age)}
-            waterUptake={waterUptake}
-            nutrientsFed={nutrientsFed}
-            environmentalStats={environmentalStats}
-            onStatsChange={setEnvironmentalStats}
-            onManualDose={handleManualDose}
-            onManualRefill={handleManualRefill}
-            nutrients={nutrients}
-            onNutrientChange={handleNutrientChange}
-            onResetNutrients={handleResetNutrients}
-            onAgeChange={handleAgeChange}
-            simMinutes={simMinutes}
-            reservoir={reservoir}
-            onReservoirChange={setReservoir}
-            turbidity={turbidity}
-            onTurbidityChange={setTurbidity}
-            onFiveHourJump={handleFiveHourJump}
-          />
+        <section className="xl:col-span-3 flex flex-col space-y-2.5 min-h-0 h-full overflow-y-auto pr-1 animate-fade-in" id="controls-panel-container">
+          {/* Simulation Control Card */}
+          <div className="bg-[#111217]/50 border border-slate-900 rounded-lg p-2.5 flex flex-col shrink-0">
+            <ControlsPanel
+              scenario={scenario}
+              onScenarioChange={handleScenarioChange}
+              growthStage={growthStage}
+              onStageChange={handleStageChange}
+              isRunning={isRunning}
+              onToggleRunning={() => setIsRunning(!isRunning)}
+              onReset={handleReset}
+              speed={speed}
+              onSpeedChange={setSpeed}
+              realTime={realTime}
+              onRealTimeToggle={() => setRealTime(!realTime)}
+              autoCorrect={autoCorrect}
+              onAutoCorrectToggle={() => setAutoCorrect(!autoCorrect)}
+              metrics={metrics}
+              harvestDays={Math.max(1.0, 28 - metrics.age)}
+              waterUptake={waterUptake}
+              nutrientsFed={nutrientsFed}
+              environmentalStats={environmentalStats}
+              onStatsChange={setEnvironmentalStats}
+              onManualDose={handleManualDose}
+              onManualRefill={handleManualRefill}
+              nutrients={nutrients}
+              onNutrientChange={handleNutrientChange}
+              onResetNutrients={handleResetNutrients}
+              onAgeChange={handleAgeChange}
+              simMinutes={simMinutes}
+              reservoir={reservoir}
+              onReservoirChange={setReservoir}
+              turbidity={turbidity}
+              onTurbidityChange={setTurbidity}
+              onFiveHourJump={handleFiveHourJump}
+            />
+          </div>
+
+          {/* Growth Potential Card */}
+          <div className="bg-[#12141c]/60 border border-slate-900 rounded-lg p-3 flex flex-col justify-between shrink-0" id="growth-potential-card">
+            <span className="text-[10px] text-slate-500 font-extrabold uppercase tracking-wider">Growth Potential</span>
+            <strong className="mt-1 block text-2xl font-black text-white">
+              {Math.round(lettuceAssessment.growthFactor * 100)}<span className="text-xs font-normal text-slate-500">%</span>
+            </strong>
+          </div>
+
+          {/* Solution Strength Card */}
+          <div className="bg-[#12141c]/60 border border-slate-900 rounded-lg p-3 flex flex-col justify-between shrink-0" id="solution-strength-card">
+            <span className="text-[10px] text-slate-500 font-extrabold uppercase tracking-wider">Solution Strength</span>
+            <strong className="mt-1 block text-2xl font-black text-white">
+              {Math.round(lettuceAssessment.solutionStrength * 100)}<span className="text-xs font-normal text-slate-500">% full</span>
+            </strong>
+          </div>
+
+          {/* Antioxidant Focus Card */}
+          <div className="bg-[#12141c]/60 border border-slate-900 rounded-lg p-3 flex flex-col justify-between shrink-0" id="antioxidant-focus-card">
+            <span className="text-[10px] text-slate-500 font-extrabold uppercase tracking-wider">Antioxidant Focus</span>
+            <strong className="mt-1 block text-2xl font-black text-white">
+              {Math.round(lettuceAssessment.antioxidantFactor * 100)}<span className="text-xs font-normal text-slate-500">%</span>
+            </strong>
+          </div>
         </section>
 
         {/* COLUMN 2 & 3 Combined: HIGH-DENSITY WORKSPACE WITH TAB TOGGLES */}
@@ -1234,13 +1176,28 @@ export default function Analytics() {
           {activeTab === "twin" && (
             <div style={{ height: 'calc(100% - 50px)' }} className="grid grid-cols-1 lg:grid-cols-12 gap-3 min-h-0 flex-1 overflow-hidden animate-fade-in" id="tab-twin-content">
               
-              {/* Twin Left column: Bio specs & Solutes Status */}
-              <div className="lg:col-span-7 flex flex-col space-y-2.5 min-h-0 h-full">
+              {/* Center Column: Crop Species, Visualizer & Charts */}
+              <div className="lg:col-span-8 flex flex-col space-y-2.5 min-h-0 h-full">
                 
+                {/* Crop Species Selector Card */}
+                <div className="bg-[#12141c]/60 border border-slate-900 rounded-lg p-2.5 flex flex-col space-y-1.5 shrink-0">
+                  <span className="text-[8.5px] text-slate-500 font-bold uppercase tracking-wider">Crop Species</span>
+                  <select
+                    value={cropType}
+                    onChange={(e) => handleCropChange(e.target.value)}
+                    className="w-full bg-[#14151c] text-slate-100 border border-slate-800 rounded-lg px-3 py-1.5 focus:outline-none focus:border-emerald-500 text-xs font-extrabold"
+                    id="select-crop-type-center"
+                  >
+                    <option value="Lettuce">Green Coral Lettuce (L. sativa)</option>
+                    <option value="Basil">Genovese Sweet Basil (O. basilicum)</option>
+                    <option value="Spinach">Bloomsdale Spinach (S. oleracea)</option>
+                  </select>
+                </div>
+
                 {/* Twin Biological Specs Card */}
                 <div className="flex flex-col border border-slate-900 rounded-lg overflow-hidden bg-[#12141c]/40 shadow-sm shrink-0" id="twin-biological-specs">
                   {/* Visualizer Frame */}
-                  <div className="w-full h-[175px] border-b border-slate-900 p-3 flex flex-col justify-between bg-slate-950/40 relative">
+                  <div className="w-full h-[220px] p-3 flex flex-col justify-between bg-slate-950/40 relative">
                     <div className="flex items-center justify-between">
                       <span className="text-[10px] text-yellow-500 font-bold uppercase tracking-wide">
                         Digital Twin Model
@@ -1259,56 +1216,7 @@ export default function Analytics() {
                         onHarvest={handleHarvest}
                       />
                     </div>
-                                  {/* Specs Readout */}
-                  <div className="w-full p-3 flex flex-col justify-between bg-[#12141c]/20">
-                    <div className="flex items-start justify-between border-b border-slate-900 pb-2">
-                      <div className="flex flex-col">
-                        <span className="text-[10.5px] text-yellow-500 font-bold uppercase tracking-wider">
-                          Bio-Physical Specs
-                        </span>
-                        <span className="text-[9px] text-slate-500 font-bold uppercase mt-0.5">
-                          {cropType} ({growthStage} stage)
-                        </span>
-                      </div>
-                      <div className={`text-[10px] font-bold px-2 py-0.5 rounded border ${
-                        metrics.health > 85
-                          ? "text-emerald-400 bg-emerald-950/40 border-emerald-900/30"
-                          : "text-amber-400 bg-amber-950/40 border-amber-900/30"
-                      }`}>
-                        Health Index: {metrics.health}%
-                      </div>
-                    </div>
- 
-                    {/* Specs Grid */}
-                    <div className="grid grid-cols-3 gap-y-2 gap-x-3.5 text-[10px] text-slate-400 mt-2">
-                      <div>
-                        <span className="text-slate-500 block text-[8px] uppercase">Growth Progress</span>
-                        <span className="text-slate-200 font-bold block mt-0.5">
-                          {Math.min(100, Math.round((metrics.age / 28) * 100))}%
-                        </span>
-                      </div>
-                      <div>
-                        <span className="text-slate-500 block text-[8px] uppercase">Fresh Biomass</span>
-                        <span className="text-slate-200 font-bold block mt-0.5">{metrics.freshBiomass.toFixed(1)}g</span>
-                      </div>
-                      <div>
-                        <span className="text-slate-500 block text-[8px] uppercase">Leaf Morphology</span>
-                        <span className="text-slate-200 font-bold block mt-0.5">{leafColor}</span>
-                      </div>
-                      <div>
-                        <span className="text-slate-500 block text-[8px] uppercase">Lettuce Height</span>
-                        <span className="text-slate-200 font-bold block mt-0.5">{metrics.height.toFixed(1)} cm</span>
-                      </div>
-                      <div>
-                        <span className="text-slate-500 block text-[8px] uppercase">Root Health</span>
-                        <span className="text-slate-200 font-bold block mt-0.5">{rootHealth}%</span>
-                      </div>
-                      <div>
-                        <span className="text-slate-500 block text-[8px] uppercase">Cellular Stress</span>
-                        <span className="text-slate-200 font-bold block mt-0.5">{stressLevel}%</span>
-                      </div>
-                    </div>
-                  </div>    </div>
+                  </div>
                 </div>
 
                 {/* Crop Growth Days & Lifecycle Timeline Card */}
@@ -1575,7 +1483,7 @@ export default function Analytics() {
               </div>
 
               {/* Twin Right column: Live Probes & Simulation Timeline */}
-              <div className="lg:col-span-5 flex flex-col space-y-2.5 min-h-0 h-full">
+              <div className="lg:col-span-4 flex flex-col space-y-2.5 min-h-0 h-full">
                 
                 {/* Probes Display */}
                 <div className="bg-[#12141c]/60 border border-slate-900 rounded-lg p-2.5 flex flex-col space-y-2 shrink-0" id="live-sensors-card">
