@@ -1,0 +1,8 @@
+{
+  "scripts": {
+    "dev": "concurrently \"cd frontend && npm run dev\" \"cd backend && npm run dev\" \"cd python-generator && python -u main.py\""
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.3"
+  }
+}
