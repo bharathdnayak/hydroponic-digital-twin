@@ -103,11 +103,11 @@ export default function ControlsPanel({
   };
 
   return (
-    <div className="flex flex-col space-y-3.5 text-sm font-mono select-none h-full" id="sim-control-sidebar">
+    <div className="flex flex-col space-y-4.5 text-sm font-mono select-none h-full" id="sim-control-sidebar">
       
       {/* Simulation Playback Bar */}
-      <div className="flex flex-col space-y-2.5 bg-slate-950/40 p-3 rounded-lg border border-slate-900" id="sim-playback-box">
-        <span className="text-[10.5px] text-slate-400 font-extrabold uppercase tracking-wide">
+      <div className="flex flex-col space-y-3 bg-slate-950/40 p-3.5 rounded-lg border border-slate-900" id="sim-playback-box">
+        <span className="text-xs text-slate-400 font-extrabold uppercase tracking-wide">
           Simulation Control Engine
         </span>
         
@@ -145,12 +145,12 @@ export default function ControlsPanel({
         </div>
 
         {/* Speed Dials */}
-        <div className="grid grid-cols-4 gap-1 bg-slate-950/60 p-1 rounded-lg border border-slate-900">
+        <div className="grid grid-cols-4 gap-1 bg-slate-950/60 p-1.5 rounded-lg border border-slate-900">
           {[1, 2, 5, 10, 30, 50, 100].map((s) => (
             <button
               key={s}
               onClick={() => onSpeedChange(s)}
-              className={`py-1 rounded-md text-[10px] font-black transition-all cursor-pointer ${
+              className={`py-1 rounded-md text-[11px] font-black transition-all cursor-pointer ${
                 speed === s && isRunning
                   ? "bg-[#a3e635] text-slate-950 font-black"
                   : "text-slate-400 hover:text-slate-200"
@@ -175,10 +175,10 @@ export default function ControlsPanel({
       </div>
 
       {/* Control Tabs Toggle */}
-      <div className="grid grid-cols-2 gap-1.5 bg-slate-950 p-1 rounded-lg border border-slate-900" id="tabs-toggle">
+      <div className="grid grid-cols-2 gap-1.5 bg-slate-950 p-1.5 rounded-lg border border-slate-900" id="tabs-toggle">
         <button
           onClick={() => setControlTab("Scenarios")}
-          className={`py-2 px-2.5 rounded-md text-[10.5px] font-black uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+          className={`py-2 px-2.5 rounded-md text-xs font-black uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
             controlTab === "Scenarios"
               ? "bg-[#a3e635] text-slate-950 shadow-md"
               : "text-slate-450 hover:text-slate-200"
@@ -189,7 +189,7 @@ export default function ControlsPanel({
         </button>
         <button
           onClick={() => setControlTab("Tuning")}
-          className={`py-2 px-2.5 rounded-md text-[10.5px] font-black uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+          className={`py-2 px-2.5 rounded-md text-xs font-black uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
             controlTab === "Tuning"
               ? "bg-[#a3e635] text-slate-950 shadow-md"
               : "text-slate-450 hover:text-slate-200"
@@ -200,7 +200,7 @@ export default function ControlsPanel({
         </button>
         <button
           onClick={() => setControlTab("Nutrients")}
-          className={`py-2 px-2.5 rounded-md text-[10.5px] font-black uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+          className={`py-2 px-2.5 rounded-md text-xs font-black uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
             controlTab === "Nutrients"
               ? "bg-[#a3e635] text-slate-950 shadow-md"
               : "text-slate-450 hover:text-slate-200"
@@ -211,7 +211,7 @@ export default function ControlsPanel({
         </button>
         <button
           onClick={() => setControlTab("Days")}
-          className={`py-2 px-2.5 rounded-md text-[10.5px] font-black uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+          className={`py-2 px-2.5 rounded-md text-xs font-black uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
             controlTab === "Days"
               ? "bg-[#a3e635] text-slate-950 shadow-md"
               : "text-slate-450 hover:text-slate-200"
@@ -724,8 +724,8 @@ export default function ControlsPanel({
       )}
 
       {/* Switches & Safeties */}
-      <div className="flex flex-col space-y-1.5 bg-[#12141c]/50 p-2 rounded border border-slate-900" id="automatic-safeties">
-        <span className="text-[8px] text-slate-500 font-bold uppercase tracking-wider mb-0.5">
+      <div className="flex flex-col space-y-1.5 bg-[#12141c]/50 p-2.5 rounded border border-slate-900" id="automatic-safeties">
+        <span className="text-[9px] text-slate-500 font-bold uppercase tracking-wider mb-0.5">
           Automation Loops
         </span>
         <div className="flex justify-between gap-4">
@@ -737,7 +737,7 @@ export default function ControlsPanel({
               className="rounded accent-[#a3e635] bg-slate-800 border-slate-700 text-[#a3e635] focus:ring-0"
               id="chk-real-time"
             />
-            <span className="text-[9.5px] text-slate-300 font-bold">Real-time stats</span>
+            <span className="text-[10.5px] text-slate-300 font-bold">Real-time stats</span>
           </label>
           <label className="flex items-center space-x-2 cursor-pointer select-none">
             <input
@@ -747,32 +747,32 @@ export default function ControlsPanel({
               className="rounded accent-[#a3e635] bg-slate-800 border-slate-700 text-[#a3e635] focus:ring-0"
               id="chk-auto-correct"
             />
-            <span className="text-[9.5px] text-slate-300 font-bold">Auto Dosing</span>
+            <span className="text-[10.5px] text-slate-300 font-bold">Auto Dosing</span>
           </label>
         </div>
       </div>
 
       {/* Accumulated simulation telemetry readout */}
-      <div className="bg-[#12141c]/60 p-2.5 rounded-lg border border-slate-900 flex flex-col space-y-1.5 mt-auto" id="accumulated-ledger">
-        <span className="text-[9px] text-yellow-500 font-bold uppercase tracking-wider">
+      <div className="bg-[#12141c]/60 p-3 rounded-lg border border-slate-900 flex flex-col space-y-2 mt-auto" id="accumulated-ledger">
+        <span className="text-[9.5px] text-yellow-500 font-bold uppercase tracking-wider">
           Resources Accumulated Ledger
         </span>
-        <div className="grid grid-cols-2 gap-y-2 gap-x-3.5 text-[10px] text-slate-400" id="ledger-stats">
+        <div className="grid grid-cols-2 gap-y-2.5 gap-x-4 text-[10.5px] text-slate-400" id="ledger-stats">
           <div>
-            <span className="text-slate-500 text-[8px] uppercase font-bold">Water Absorbed</span>
-            <span className="text-slate-200 font-black block mt-0.5 text-[11px]">{waterUptake.toFixed(2)} L</span>
+            <span className="text-slate-550 text-[8.5px] uppercase font-bold">Water Absorbed</span>
+            <span className="text-slate-200 font-black block mt-0.5 text-xs">{waterUptake.toFixed(2)} L</span>
           </div>
           <div>
-            <span className="text-slate-500 text-[8px] uppercase font-bold">Minerals Fed</span>
-            <span className="text-slate-200 font-black block mt-0.5 text-[11px]">{nutrientsFed.toFixed(2)} g</span>
+            <span className="text-slate-550 text-[8.5px] uppercase font-bold">Minerals Fed</span>
+            <span className="text-slate-200 font-black block mt-0.5 text-xs">{nutrientsFed.toFixed(2)} g</span>
           </div>
           <div>
-            <span className="text-slate-500 text-[8px] uppercase font-bold">Net Growth Rate</span>
-            <span className="text-emerald-400 font-black block mt-0.5 text-[11px]">+{metrics.growthRate.toFixed(2)}%</span>
+            <span className="text-slate-550 text-[8.5px] uppercase font-bold">Net Growth Rate</span>
+            <span className="text-emerald-400 font-black block mt-0.5 text-xs">+{metrics.growthRate.toFixed(2)}%</span>
           </div>
           <div>
-            <span className="text-slate-500 text-[8px] uppercase font-bold">Harvest Horizon</span>
-            <span className="text-slate-200 font-black block mt-0.5 text-[11px]">{harvestDays.toFixed(1)} Days</span>
+            <span className="text-slate-550 text-[8.5px] uppercase font-bold">Harvest Horizon</span>
+            <span className="text-slate-200 font-black block mt-0.5 text-xs">{harvestDays.toFixed(1)} Days</span>
           </div>
         </div>
       </div>

@@ -1083,25 +1083,25 @@ export default function Analytics() {
           </div>
 
           {/* Growth Potential Card */}
-          <div className="bg-[#12141c]/60 border border-slate-900 rounded-lg p-3 flex flex-col justify-between shrink-0" id="growth-potential-card">
-            <span className="text-[10px] text-slate-500 font-extrabold uppercase tracking-wider">Growth Potential</span>
-            <strong className="mt-1 block text-2xl font-black text-white">
+          <div className="bg-[#12141c]/60 border border-slate-900 rounded-lg p-4 flex flex-col justify-between shrink-0" id="growth-potential-card">
+            <span className="text-[11px] text-slate-500 font-extrabold uppercase tracking-wider">Growth Potential</span>
+            <strong className="mt-1 block text-3xl font-black text-white">
               {Math.round(lettuceAssessment.growthFactor * 100)}<span className="text-xs font-normal text-slate-500">%</span>
             </strong>
           </div>
 
           {/* Solution Strength Card */}
-          <div className="bg-[#12141c]/60 border border-slate-900 rounded-lg p-3 flex flex-col justify-between shrink-0" id="solution-strength-card">
-            <span className="text-[10px] text-slate-500 font-extrabold uppercase tracking-wider">Solution Strength</span>
-            <strong className="mt-1 block text-2xl font-black text-white">
+          <div className="bg-[#12141c]/60 border border-slate-900 rounded-lg p-4 flex flex-col justify-between shrink-0" id="solution-strength-card">
+            <span className="text-[11px] text-slate-500 font-extrabold uppercase tracking-wider">Solution Strength</span>
+            <strong className="mt-1 block text-3xl font-black text-white">
               {Math.round(lettuceAssessment.solutionStrength * 100)}<span className="text-xs font-normal text-slate-500">% full</span>
             </strong>
           </div>
 
           {/* Antioxidant Focus Card */}
-          <div className="bg-[#12141c]/60 border border-slate-900 rounded-lg p-3 flex flex-col justify-between shrink-0" id="antioxidant-focus-card">
-            <span className="text-[10px] text-slate-500 font-extrabold uppercase tracking-wider">Antioxidant Focus</span>
-            <strong className="mt-1 block text-2xl font-black text-white">
+          <div className="bg-[#12141c]/60 border border-slate-900 rounded-lg p-4 flex flex-col justify-between shrink-0" id="antioxidant-focus-card">
+            <span className="text-[11px] text-slate-500 font-extrabold uppercase tracking-wider">Antioxidant Focus</span>
+            <strong className="mt-1 block text-3xl font-black text-white">
               {Math.round(lettuceAssessment.antioxidantFactor * 100)}<span className="text-xs font-normal text-slate-500">%</span>
             </strong>
           </div>
@@ -1177,15 +1177,15 @@ export default function Analytics() {
             <div style={{ height: 'calc(100% - 50px)' }} className="grid grid-cols-1 lg:grid-cols-12 gap-3 min-h-0 flex-1 overflow-hidden animate-fade-in" id="tab-twin-content">
               
               {/* Center Column: Crop Species, Visualizer & Charts */}
-              <div className="lg:col-span-8 flex flex-col space-y-2.5 min-h-0 h-full">
+              <div className="lg:col-span-8 flex flex-col space-y-3.5 min-h-0 h-full">
                 
                 {/* Crop Species Selector Card */}
-                <div className="bg-[#12141c]/60 border border-slate-900 rounded-lg p-2.5 flex flex-col space-y-1.5 shrink-0">
-                  <span className="text-[8.5px] text-slate-500 font-bold uppercase tracking-wider">Crop Species</span>
+                <div className="bg-[#12141c]/60 border border-slate-900 rounded-lg p-3 flex flex-col space-y-2 shrink-0">
+                  <span className="text-[10px] text-slate-500 font-extrabold uppercase tracking-wider">Crop Species</span>
                   <select
                     value={cropType}
                     onChange={(e) => handleCropChange(e.target.value)}
-                    className="w-full bg-[#14151c] text-slate-100 border border-slate-800 rounded-lg px-3 py-1.5 focus:outline-none focus:border-emerald-500 text-xs font-extrabold"
+                    className="w-full bg-[#14151c] text-slate-100 border border-slate-800 rounded-lg px-3 py-2 focus:outline-none focus:border-emerald-500 text-sm font-extrabold"
                     id="select-crop-type-center"
                   >
                     <option value="Lettuce">Green Coral Lettuce (L. sativa)</option>
@@ -1197,12 +1197,12 @@ export default function Analytics() {
                 {/* Twin Biological Specs Card */}
                 <div className="flex flex-col border border-slate-900 rounded-lg overflow-hidden bg-[#12141c]/40 shadow-sm shrink-0" id="twin-biological-specs">
                   {/* Visualizer Frame */}
-                  <div className="w-full h-[220px] p-3 flex flex-col justify-between bg-slate-950/40 relative">
+                  <div className="w-full h-[280px] p-3.5 flex flex-col justify-between bg-slate-950/40 relative">
                     <div className="flex items-center justify-between">
-                      <span className="text-[10px] text-yellow-500 font-bold uppercase tracking-wide">
+                      <span className="text-xs text-yellow-500 font-black uppercase tracking-wide">
                         Digital Twin Model
                       </span>
-                      <span className="flex items-center gap-1 text-[8.5px] text-emerald-400 font-bold">
+                      <span className="flex items-center gap-1.5 text-xs text-emerald-400 font-bold bg-emerald-950/30 border border-emerald-900/30 px-2 py-0.5 rounded">
                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block animate-pulse" />
                         Live
                       </span>
@@ -1220,23 +1220,23 @@ export default function Analytics() {
                 </div>
 
                 {/* Crop Growth Days & Lifecycle Timeline Card */}
-                <div className="bg-[#12141c]/40 border border-slate-900 rounded-lg p-2.5 flex flex-col space-y-2 shadow-sm shrink-0" id="twin-days-timeline-card">
+                <div className="bg-[#12141c]/40 border border-slate-900 rounded-lg p-3.5 flex flex-col space-y-3.5 shadow-sm shrink-0" id="twin-days-timeline-card">
                   <div className="flex items-center justify-between border-b border-slate-900 pb-2">
                     <div className="flex items-center space-x-2">
                       <span className="text-[12px]">📅</span>
-                      <span className="text-[9.5px] text-yellow-500 font-bold uppercase tracking-wider">
+                      <span className="text-xs text-yellow-500 font-extrabold uppercase tracking-wider">
                         Crop Growth Days & Lifecycle Timeline
                       </span>
                     </div>
-                    <span className="text-[8px] text-[#a3e635] bg-[#a3e635]/10 border border-[#a3e635]/20 px-1.5 py-0.5 rounded font-bold font-mono">
+                    <span className="text-[10px] text-[#a3e635] bg-[#a3e635]/10 border border-[#a3e635]/20 px-2 py-0.5 rounded font-bold font-mono">
                       Current: Day {metrics.age.toFixed(1)}
                     </span>
                   </div>
 
                   {/* Horizontal Timeline */}
-                  <div className="relative py-2">
+                  <div className="relative py-2.5">
                     {/* Background Progress Bar Track */}
-                    <div className="absolute top-[10px] left-6 right-6 h-1 bg-slate-950 rounded-full overflow-hidden">
+                    <div className="absolute top-[12px] left-6 right-6 h-1 bg-slate-950 rounded-full overflow-hidden">
                       {/* Active Progress Fill */}
                       <div 
                         className="h-full bg-[#a3e635] rounded-full transition-all duration-500"
@@ -1251,14 +1251,14 @@ export default function Analytics() {
                         onClick={() => handleAgeChange(0)}
                         className="flex flex-col items-center group focus:outline-none cursor-pointer"
                       >
-                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center text-[8px] font-bold z-10 transition-all ${
+                        <div className={`w-5.5 h-5.5 rounded-full border-2 flex items-center justify-center text-[10px] font-bold z-10 transition-all ${
                           metrics.age >= 0 && metrics.age < 5 
                             ? "bg-[#a3e635] text-slate-950 border-[#a3e635] scale-110 shadow-[0_0_8px_rgba(163,230,53,0.4)]"
                             : metrics.age >= 5 ? "bg-slate-900 text-emerald-400 border-emerald-500" : "bg-slate-900 text-slate-500 border-slate-800"
                         }`}>
                           0
                         </div>
-                        <span className={`text-[8px] font-bold mt-1.5 transition-colors ${metrics.age >= 0 && metrics.age < 5 ? "text-[#a3e635]" : "text-slate-500"}`}>
+                        <span className={`text-[9.5px] font-bold mt-1.5 transition-colors ${metrics.age >= 0 && metrics.age < 5 ? "text-[#a3e635]" : "text-slate-500"}`}>
                           Sprout
                         </span>
                       </button>
@@ -1268,14 +1268,14 @@ export default function Analytics() {
                         onClick={() => handleAgeChange(5)}
                         className="flex flex-col items-center group focus:outline-none cursor-pointer"
                       >
-                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center text-[8px] font-bold z-10 transition-all ${
+                        <div className={`w-5.5 h-5.5 rounded-full border-2 flex items-center justify-center text-[10px] font-bold z-10 transition-all ${
                           metrics.age >= 5 && metrics.age < 14 
                             ? "bg-[#a3e635] text-slate-950 border-[#a3e635] scale-110 shadow-[0_0_8px_rgba(163,230,53,0.4)]"
                             : metrics.age >= 14 ? "bg-slate-900 text-emerald-400 border-emerald-500" : "bg-slate-900 text-slate-500 border-slate-800"
                         }`}>
                           5
                         </div>
-                        <span className={`text-[8px] font-bold mt-1.5 transition-colors ${metrics.age >= 5 && metrics.age < 14 ? "text-[#a3e635]" : "text-slate-500"}`}>
+                        <span className={`text-[9.5px] font-bold mt-1.5 transition-colors ${metrics.age >= 5 && metrics.age < 14 ? "text-[#a3e635]" : "text-slate-500"}`}>
                           Seedling
                         </span>
                       </button>
@@ -1285,14 +1285,14 @@ export default function Analytics() {
                         onClick={() => handleAgeChange(14)}
                         className="flex flex-col items-center group focus:outline-none cursor-pointer"
                       >
-                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center text-[8px] font-bold z-10 transition-all ${
+                        <div className={`w-5.5 h-5.5 rounded-full border-2 flex items-center justify-center text-[10px] font-bold z-10 transition-all ${
                           metrics.age >= 14 && metrics.age < 28 
                             ? "bg-[#a3e635] text-slate-950 border-[#a3e635] scale-110 shadow-[0_0_8px_rgba(163,230,53,0.4)]"
                             : metrics.age >= 28 ? "bg-slate-900 text-emerald-400 border-emerald-500" : "bg-slate-900 text-slate-500 border-slate-800"
                         }`}>
                           14
                         </div>
-                        <span className={`text-[8px] font-bold mt-1.5 transition-colors ${metrics.age >= 14 && metrics.age < 28 ? "text-[#a3e635]" : "text-slate-500"}`}>
+                        <span className={`text-[9.5px] font-bold mt-1.5 transition-colors ${metrics.age >= 14 && metrics.age < 28 ? "text-[#a3e635]" : "text-slate-500"}`}>
                           Vegetative
                         </span>
                       </button>
@@ -1302,14 +1302,14 @@ export default function Analytics() {
                         onClick={() => handleAgeChange(28)}
                         className="flex flex-col items-center group focus:outline-none cursor-pointer"
                       >
-                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center text-[8px] font-bold z-10 transition-all ${
+                        <div className={`w-5.5 h-5.5 rounded-full border-2 flex items-center justify-center text-[10px] font-bold z-10 transition-all ${
                           metrics.age >= 28 && metrics.age < 35 
                             ? "bg-[#a3e635] text-slate-950 border-[#a3e635] scale-110 shadow-[0_0_8px_rgba(163,230,53,0.4)]"
                             : metrics.age >= 35 ? "bg-slate-900 text-emerald-400 border-emerald-500" : "bg-slate-900 text-slate-500 border-slate-800"
                         }`}>
                           28
                         </div>
-                        <span className={`text-[8px] font-bold mt-1.5 transition-colors ${metrics.age >= 28 && metrics.age < 35 ? "text-[#a3e635]" : "text-slate-500"}`}>
+                        <span className={`text-[9.5px] font-bold mt-1.5 transition-colors ${metrics.age >= 28 && metrics.age < 35 ? "text-[#a3e635]" : "text-slate-500"}`}>
                           Mature
                         </span>
                       </button>
@@ -1319,21 +1319,22 @@ export default function Analytics() {
                         onClick={() => handleAgeChange(35)}
                         className="flex flex-col items-center group focus:outline-none cursor-pointer"
                       >
-                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center text-[8px] font-bold z-10 transition-all ${
+                        <div className={`w-5.5 h-5.5 rounded-full border-2 flex items-center justify-center text-[10px] font-bold z-10 transition-all ${
                           metrics.age >= 35 
                             ? "bg-[#a3e635] text-slate-950 border-[#a3e635] scale-110 shadow-[0_0_8px_rgba(163,230,53,0.4)]"
                             : "bg-slate-900 text-slate-500 border-slate-800"
                         }`}>
                           35
                         </div>
-                        <span className={`text-[8px] font-bold mt-1.5 transition-colors ${metrics.age >= 35 ? "text-[#a3e635]" : "text-slate-500"}`}>
+                        <span className={`text-[9.5px] font-bold mt-1.5 transition-colors ${metrics.age >= 35 ? "text-[#a3e635]" : "text-slate-500"}`}>
                           Harvest
                         </span>
                       </button>
                     </div>
                   </div>
-                               {/* Active stage target tips */}
-                  <div className="bg-slate-950/40 border border-slate-900 p-2 rounded text-[8.5px] text-slate-400 font-mono mt-1 leading-normal">
+
+                  {/* Active stage target tips */}
+                  <div className="bg-slate-950/40 border border-slate-900 p-3 rounded-lg text-[10.5px] text-slate-400 font-mono mt-1.5 leading-relaxed">
                     <span className="text-[#a3e635] font-bold uppercase tracking-wider">
                       {metrics.age < 5 ? "Germination Guidance" : metrics.age < 14 ? "Seedling Guidance" : metrics.age < 28 ? "Vegetative Guidance" : "Mature Guidance"}:
                     </span>{" "}
@@ -1346,37 +1347,37 @@ export default function Analytics() {
                       : "Canopy fully packed. Monitor for tipburn risk by securing humidity above 50% and ensuring constant fan/exhaust ventilation."}
                   </div>
                 </div>
- 
+
                 {/* Real-time Macronutrients Solutes Dashboard */}
-                <div className="bg-[#12141c]/60 border border-slate-900 rounded-lg p-2.5 flex flex-col space-y-2 shadow-sm flex-1">
-                  <span className="text-[9.5px] text-yellow-500 font-bold uppercase tracking-wider flex items-center justify-between">
+                <div className="bg-[#12141c]/60 border border-slate-900 rounded-lg p-3.5 flex flex-col space-y-3.5 shadow-sm flex-1">
+                  <span className="text-xs text-yellow-500 font-extrabold uppercase tracking-wider flex items-center justify-between">
                     <span>Solutes Recipe Status (PPM)</span>
-                    <span className="text-[8.5px] text-slate-400">Total TDS: {reservoir.tds} ppm</span>
+                    <span className="text-[10px] text-slate-400">Total TDS: {reservoir.tds} ppm</span>
                   </span>
- 
+
                   {/* Active deficiencies warning banner */}
                   {activeDeficiencies.length > 0 && (
-                    <div className="bg-amber-950/40 border border-amber-900/30 text-amber-400 px-2.5 py-1 rounded text-[8.5px] font-bold flex items-center gap-1.5 animate-pulse">
+                    <div className="bg-amber-950/40 border border-amber-900/30 text-amber-400 px-3 py-2 rounded-lg text-[10px] font-bold flex items-center gap-1.5 animate-pulse">
                       <span className="w-1.5 h-1.5 rounded-full bg-amber-500 block shrink-0" />
                       <span>Deficiency alert: {activeDeficiencies.join(", ")}</span>
                     </div>
                   )}
- 
+
                   {/* Micro progress columns */}
-                  <div className="grid grid-cols-2 gap-y-2 gap-x-4 text-[10px] py-1">
+                  <div className="grid grid-cols-2 gap-y-3.5 gap-x-6 text-xs py-1.5">
                     {/* Nitrogen */}
-                    <div className="flex flex-col space-y-1">
+                    <div className="flex flex-col space-y-1.5">
                       <div className="flex justify-between font-bold text-slate-400">
                         <span>Nitrogen (N)</span>
                         <span className="text-slate-200">{nutrients.nitrogen} ppm</span>
                       </div>
-                      <div className="h-1.5 bg-slate-950 rounded-full overflow-hidden">
+                      <div className="h-2 bg-slate-950 rounded-full overflow-hidden">
                         <div 
                           className={`h-full rounded-full transition-all duration-300 ${nutrients.nitrogen < 80 ? 'bg-amber-500 animate-pulse' : 'bg-blue-500'}`} 
                           style={{ width: `${Math.min(100, (nutrients.nitrogen / 300) * 100)}%` }} 
                         />
                       </div>
-                      <div className="flex justify-between text-[8px] text-slate-650 uppercase font-extrabold">
+                      <div className="flex justify-between text-[9px] text-slate-655 uppercase font-extrabold">
                         <span>Min: 80</span>
                         <span>Target: 150</span>
                         <span>Max: 250</span>
@@ -1384,18 +1385,18 @@ export default function Analytics() {
                     </div>
 
                     {/* Phosphorus */}
-                    <div className="flex flex-col space-y-1">
+                    <div className="flex flex-col space-y-1.5">
                       <div className="flex justify-between font-bold text-slate-400">
                         <span>Phosphorus (P)</span>
                         <span className="text-slate-200">{nutrients.phosphorus} ppm</span>
                       </div>
-                      <div className="h-1.5 bg-slate-950 rounded-full overflow-hidden">
+                      <div className="h-2 bg-slate-950 rounded-full overflow-hidden">
                         <div 
                           className={`h-full rounded-full transition-all duration-300 ${nutrients.phosphorus < 20 ? 'bg-amber-500 animate-pulse' : 'bg-purple-500'}`} 
                           style={{ width: `${Math.min(100, (nutrients.phosphorus / 150) * 100)}%` }} 
                         />
                       </div>
-                      <div className="flex justify-between text-[8px] text-slate-650 uppercase font-extrabold">
+                      <div className="flex justify-between text-[9px] text-slate-655 uppercase font-extrabold">
                         <span>Min: 20</span>
                         <span>Target: 50</span>
                         <span>Max: 100</span>
@@ -1403,18 +1404,18 @@ export default function Analytics() {
                     </div>
 
                     {/* Potassium */}
-                    <div className="flex flex-col space-y-1">
+                    <div className="flex flex-col space-y-1.5">
                       <div className="flex justify-between font-bold text-slate-400">
                         <span>Potassium (K)</span>
                         <span className="text-slate-200">{nutrients.potassium} ppm</span>
                       </div>
-                      <div className="h-1.5 bg-slate-950 rounded-full overflow-hidden">
+                      <div className="h-2 bg-slate-950 rounded-full overflow-hidden">
                         <div 
                           className={`h-full rounded-full transition-all duration-300 ${nutrients.potassium < 100 ? 'bg-amber-500 animate-pulse' : 'bg-yellow-500'}`} 
                           style={{ width: `${Math.min(100, (nutrients.potassium / 400) * 100)}%` }} 
                         />
                       </div>
-                      <div className="flex justify-between text-[8px] text-slate-650 uppercase font-extrabold">
+                      <div className="flex justify-between text-[9px] text-slate-655 uppercase font-extrabold">
                         <span>Min: 100</span>
                         <span>Target: 200</span>
                         <span>Max: 350</span>
@@ -1422,18 +1423,18 @@ export default function Analytics() {
                     </div>
 
                     {/* Calcium */}
-                    <div className="flex flex-col space-y-1">
+                    <div className="flex flex-col space-y-1.5">
                       <div className="flex justify-between font-bold text-slate-400">
                         <span>Calcium (Ca)</span>
                         <span className="text-slate-200">{nutrients.calcium} ppm</span>
                       </div>
-                      <div className="h-1.5 bg-slate-950 rounded-full overflow-hidden">
+                      <div className="h-2 bg-slate-950 rounded-full overflow-hidden">
                         <div 
                           className={`h-full rounded-full transition-all duration-300 ${nutrients.calcium < 70 ? 'bg-red-500 animate-pulse' : 'bg-red-400'}`} 
                           style={{ width: `${Math.min(100, (nutrients.calcium / 300) * 100)}%` }} 
                         />
                       </div>
-                      <div className="flex justify-between text-[8px] text-slate-650 uppercase font-extrabold">
+                      <div className="flex justify-between text-[9px] text-slate-655 uppercase font-extrabold">
                         <span>Min: 70</span>
                         <span>Target: 150</span>
                         <span>Max: 250</span>
@@ -1441,18 +1442,18 @@ export default function Analytics() {
                     </div>
 
                     {/* Magnesium */}
-                    <div className="flex flex-col space-y-1">
+                    <div className="flex flex-col space-y-1.5">
                       <div className="flex justify-between font-bold text-slate-400">
                         <span>Magnesium (Mg)</span>
                         <span className="text-slate-200">{nutrients.magnesium} ppm</span>
                       </div>
-                      <div className="h-1.5 bg-slate-950 rounded-full overflow-hidden">
+                      <div className="h-2 bg-slate-950 rounded-full overflow-hidden">
                         <div 
                           className={`h-full rounded-full transition-all duration-300 ${nutrients.magnesium < 10 ? 'bg-amber-500 animate-pulse' : 'bg-pink-500'}`} 
                           style={{ width: `${Math.min(100, (nutrients.magnesium / 150) * 100)}%` }} 
                         />
                       </div>
-                      <div className="flex justify-between text-[8px] text-slate-650 uppercase font-extrabold">
+                      <div className="flex justify-between text-[9px] text-slate-655 uppercase font-extrabold">
                         <span>Min: 10</span>
                         <span>Target: 60</span>
                         <span>Max: 100</span>
@@ -1460,18 +1461,18 @@ export default function Analytics() {
                     </div>
 
                     {/* Sulfur */}
-                    <div className="flex flex-col space-y-1">
+                    <div className="flex flex-col space-y-1.5">
                       <div className="flex justify-between font-bold text-slate-400">
                         <span>Sulfur (S)</span>
                         <span className="text-slate-200">{nutrients.sulfur} ppm</span>
                       </div>
-                      <div className="h-1.5 bg-slate-950 rounded-full overflow-hidden">
+                      <div className="h-2 bg-slate-950 rounded-full overflow-hidden">
                         <div 
                           className={`h-full rounded-full transition-all duration-300 ${nutrients.sulfur < 20 ? 'bg-amber-500 animate-pulse' : 'bg-teal-500'}`} 
                           style={{ width: `${Math.min(100, (nutrients.sulfur / 150) * 100)}%` }} 
                         />
                       </div>
-                      <div className="flex justify-between text-[8px] text-slate-650 uppercase font-extrabold">
+                      <div className="flex justify-between text-[9px] text-slate-655 uppercase font-extrabold">
                         <span>Min: 20</span>
                         <span>Target: 80</span>
                         <span>Max: 150</span>
@@ -1483,65 +1484,65 @@ export default function Analytics() {
               </div>
 
               {/* Twin Right column: Live Probes & Simulation Timeline */}
-              <div className="lg:col-span-4 flex flex-col space-y-2.5 min-h-0 h-full">
+              <div className="lg:col-span-4 flex flex-col space-y-3 min-h-0 h-full">
                 
                 {/* Probes Display */}
-                <div className="bg-[#12141c]/60 border border-slate-900 rounded-lg p-2.5 flex flex-col space-y-2 shrink-0" id="live-sensors-card">
-                  <div className="flex items-center justify-between border-b border-slate-900 pb-2">
-                    <span className="text-[10.5px] text-yellow-500 font-bold uppercase tracking-wider">
+                <div className="bg-[#12141c]/60 border border-slate-900 rounded-lg p-3.5 flex flex-col space-y-3.5 shrink-0" id="live-sensors-card">
+                  <div className="flex items-center justify-between border-b border-slate-900 pb-2.5">
+                    <span className="text-xs text-yellow-500 font-extrabold uppercase tracking-wider">
                       Live Probes
                     </span>
-                    <span className="flex items-center gap-1 text-[8.5px] font-bold text-emerald-400 bg-emerald-950/20 border border-emerald-900/30 px-1.5 py-0.5 rounded shadow-sm">
+                    <span className="flex items-center gap-1.5 text-[10px] font-bold text-emerald-400 bg-emerald-950/20 border border-emerald-900/30 px-2 py-0.5 rounded shadow-sm">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block animate-pulse" />
-                      PUMP SPEED: {environmentalStats.pumpSpeed}%
+                      PUMP: {environmentalStats.pumpSpeed}%
                     </span>
                   </div>
  
-                  <div className="grid grid-cols-2 gap-2 text-xs text-slate-300 font-mono">
+                  <div className="grid grid-cols-2 gap-3 text-xs text-slate-300 font-mono">
                     {/* pH Probe */}
-                    <div className="bg-[#14151b] p-2 rounded border border-slate-900 flex flex-col justify-between min-h-[50px]">
+                    <div className="bg-[#14151b] p-3 rounded-lg border border-slate-900 flex flex-col justify-between min-h-[64px]">
                       <div className="flex justify-between items-start">
-                        <span className="text-slate-500 text-[8.5px] uppercase font-bold">pH</span>
-                        <span className="text-[8.5px] text-slate-650 font-bold">pH</span>
+                        <span className="text-slate-550 text-[10px] uppercase font-bold">pH</span>
+                        <span className="text-[9px] text-slate-650 font-bold">pH</span>
                       </div>
-                      <span className="text-xs font-black text-white mt-1">{reservoir.pH.toFixed(2)}</span>
-                      <div className="w-full bg-slate-950 h-1 rounded overflow-hidden mt-1">
-                        <div className="bg-blue-500 h-full" style={{ width: `${Math.min(100, (reservoir.pH / 14) * 100)}%` }} />
+                      <span className="text-xl font-black text-white mt-1.5">{reservoir.pH.toFixed(2)}</span>
+                      <div className="w-full bg-slate-950 h-1.5 rounded overflow-hidden mt-1.5">
+                        <div className="bg-blue-500 h-full animate-[pulse_2s_infinite]" style={{ width: `${Math.min(100, (reservoir.pH / 14) * 100)}%` }} />
                       </div>
                     </div>
  
                     {/* EC Probe */}
-                    <div className="bg-[#14151b] p-2 rounded border border-slate-900 flex flex-col justify-between min-h-[50px]">
+                    <div className="bg-[#14151b] p-3 rounded-lg border border-slate-900 flex flex-col justify-between min-h-[64px]">
                       <div className="flex justify-between items-start">
-                        <span className="text-slate-500 text-[8.5px] uppercase font-bold">Solute EC</span>
-                        <span className="text-[8.5px] text-slate-650 font-bold">mS/cm</span>
+                        <span className="text-slate-550 text-[10px] uppercase font-bold">Solute EC</span>
+                        <span className="text-[9px] text-slate-655 font-bold">mS/cm</span>
                       </div>
-                      <span className="text-xs font-black text-white mt-1">{reservoir.ec.toFixed(2)}</span>
-                      <div className="w-full bg-slate-950 h-1 rounded overflow-hidden mt-1">
+                      <span className="text-xl font-black text-white mt-1.5">{reservoir.ec.toFixed(2)}</span>
+                      <div className="w-full bg-slate-950 h-1.5 rounded overflow-hidden mt-1.5">
                         <div className="bg-cyan-400 h-full" style={{ width: `${Math.min(100, (reservoir.ec / 3.0) * 100)}%` }} />
                       </div>
                     </div>
  
                     {/* Turbidity */}
-                    <div className="bg-[#14151b] p-2 rounded border border-slate-900 flex flex-col justify-between min-h-[50px]">
+                    <div className="bg-[#14151b] p-3 rounded-lg border border-slate-900 flex flex-col justify-between min-h-[64px]">
                       <div className="flex justify-between items-start">
-                        <span className="text-slate-500 text-[8.5px] uppercase font-bold">Turbidity</span>
-                        <span className="text-[8.5px] text-slate-650 font-bold">NTU</span>
+                        <span className="text-slate-550 text-[10px] uppercase font-bold">Turbidity</span>
+                        <span className="text-[9px] text-slate-655 font-bold">NTU</span>
                       </div>
-                      <span className="text-xs font-black text-white mt-1">{currentTurbidity.toFixed(1)}</span>
-                      <div className="w-full bg-slate-950 h-1 rounded overflow-hidden mt-1">
+                      <span className="text-xl font-black text-white mt-1.5">{currentTurbidity.toFixed(1)}</span>
+                      <div className="w-full bg-slate-950 h-1.5 rounded overflow-hidden mt-1.5">
                         <div className="bg-orange-500 h-full" style={{ width: `${Math.min(100, (currentTurbidity / 12) * 100)}%` }} />
                       </div>
                     </div>
  
                     {/* PAR Light intensity */}
-                    <div className="bg-[#14151b] p-2 rounded border border-slate-900 flex flex-col justify-between min-h-[50px]">
+                    <div className="bg-[#14151b] p-3 rounded-lg border border-slate-900 flex flex-col justify-between min-h-[64px]">
                       <div className="flex justify-between items-start">
-                        <span className="text-slate-500 text-[8.5px] uppercase font-bold">Light PPFD</span>
-                        <span className="text-[8.5px] text-slate-650 font-bold">µmol</span>
+                        <span className="text-slate-550 text-[10px] uppercase font-bold">Light PPFD</span>
+                        <span className="text-[9px] text-slate-655 font-bold">µmol</span>
                       </div>
-                      <span className="text-xs font-black text-white mt-1">{environmentalStats.ledIntensity}</span>
-                      <div className="w-full bg-slate-950 h-1 rounded overflow-hidden mt-1">
+                      <span className="text-xl font-black text-white mt-1.5">{environmentalStats.ledIntensity}</span>
+                      <div className="w-full bg-slate-950 h-1.5 rounded overflow-hidden mt-1.5">
                         <div className="bg-yellow-400 h-full" style={{ width: `${Math.min(100, (environmentalStats.ledIntensity / 400) * 100)}%` }} />
                       </div>
                     </div>
@@ -1549,14 +1550,14 @@ export default function Analytics() {
                 </div>
  
                 {/* Timeline Console */}
-                <div className="flex-1 bg-[#12141c]/60 border border-slate-900 rounded-lg p-2.5 flex flex-col space-y-1.5 min-h-[120px] shadow-sm overflow-hidden" id="simulation-timeline-card">
-                  <span className="text-[11px] text-yellow-500 font-bold uppercase tracking-wider">
+                <div className="flex-1 bg-[#12141c]/60 border border-slate-900 rounded-lg p-3.5 flex flex-col space-y-2 min-h-[140px] shadow-sm overflow-hidden" id="simulation-timeline-card">
+                  <span className="text-xs text-yellow-500 font-extrabold uppercase tracking-wider">
                     Simulation Timeline Log
                   </span>
-                  <div className="flex-1 bg-slate-950/80 border border-slate-950 p-2.5 rounded overflow-y-auto text-[10.5px] text-slate-400 font-mono space-y-2" id="timeline-logs-viewport">
+                  <div className="flex-1 bg-slate-950/80 border border-slate-950 p-3 rounded overflow-y-auto text-xs text-slate-400 font-mono space-y-2.5 animate-fade-in" id="timeline-logs-viewport">
                     {timeline.map((log, idx) => (
-                      <div key={`log-row-${idx}`} className="leading-relaxed border-l-2 border-slate-800 pl-2 hover:border-[#a3e635] transition-all duration-300">
-                        <span className="text-slate-500 font-bold">{log.slice(0, 7)}</span>
+                      <div key={`log-row-${idx}`} className="leading-relaxed border-l-2 border-slate-800 pl-2.5 hover:border-[#a3e635] transition-all duration-300">
+                        <span className="text-slate-550 font-bold">{log.slice(0, 7)}</span>
                         <span className="text-slate-350">{log.slice(7)}</span>
                       </div>
                     ))}
