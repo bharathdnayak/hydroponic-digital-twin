@@ -951,21 +951,37 @@ export default function ControlsPanel({
           </button>
 
           {/* Crop Age fine-tuning Slider */}
-          <div className="flex flex-col space-y-1.5 bg-slate-900/40 p-3 rounded-lg border border-slate-900 shrink-0">
-            <div className="flex justify-between text-[11px] font-bold">
+          <div className="flex flex-col space-y-2 bg-[#14151b]/40 p-2.5 rounded-lg border border-slate-900/60 shrink-0">
+            <div className="flex justify-between text-xs font-bold px-0.5">
               <span className="text-slate-400 uppercase tracking-wide">Fine-Tune Crop Age</span>
               <span className="text-white font-black text-xs">{metrics.age.toFixed(1)} Days</span>
             </div>
-            <input
-              type="range"
-              min="0"
-              max="35"
-              step="0.5"
-              value={metrics.age}
-              onChange={(e) => onAgeChange(parseFloat(e.target.value))}
-              className="w-full h-1 bg-slate-950 rounded-lg appearance-none cursor-pointer accent-[#a3e635]"
-            />
-            <p className="text-[9px] text-slate-500 mt-1 leading-normal">
+            <div className="flex items-center space-x-2">
+              <button
+                type="button"
+                onClick={() => onAgeChange(parseFloat(Math.max(0, metrics.age - 0.5).toFixed(1)))}
+                className="w-5.5 h-5.5 rounded bg-slate-950 hover:bg-slate-900 border border-slate-850 text-slate-400 hover:text-white flex items-center justify-center font-black text-xs cursor-pointer select-none active:scale-90 transition-all"
+              >
+                -
+              </button>
+              <input
+                type="range"
+                min="0"
+                max="35"
+                step="0.5"
+                value={metrics.age}
+                onChange={(e) => onAgeChange(parseFloat(e.target.value))}
+                className="flex-1 h-1.5 bg-slate-950 border border-slate-900/60 rounded-lg appearance-none cursor-pointer accent-[#a3e635]"
+              />
+              <button
+                type="button"
+                onClick={() => onAgeChange(parseFloat(Math.min(35, metrics.age + 0.5).toFixed(1)))}
+                className="w-5.5 h-5.5 rounded bg-slate-950 hover:bg-slate-900 border border-slate-850 text-slate-400 hover:text-white flex items-center justify-center font-black text-xs cursor-pointer select-none active:scale-90 transition-all"
+              >
+                +
+              </button>
+            </div>
+            <p className="text-[9px] text-slate-500 mt-1 leading-normal italic px-0.5">
               Adjusting the age immediately recalculates leaves, root length, and canopy biomass.
             </p>
           </div>
