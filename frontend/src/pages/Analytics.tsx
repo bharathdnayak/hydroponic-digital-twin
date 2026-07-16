@@ -1085,41 +1085,41 @@ export default function Analytics() {
           
           {/* Workspace Tabs Toggle */}
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-900 pb-3 shrink-0" id="workspace-tabs-bar">
-            <div className="flex items-center space-x-2 bg-slate-950/80 p-1.5 rounded-xl border border-slate-900 shadow-lg flex-wrap">
+            <div className="flex items-center space-x-3.5 bg-slate-950/80 p-2 rounded-2xl border border-slate-900 shadow-lg flex-wrap">
               <button
                 onClick={() => setActiveTab("twin")}
-                className={`px-4 py-2 rounded-lg text-[11px] font-black uppercase tracking-wider flex items-center gap-2 transition-all cursor-pointer ${
+                className={`px-5.5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-3 transition-all cursor-pointer ${
                   activeTab === "twin"
                     ? "bg-[#a3e635] text-slate-950 shadow-md font-black"
                     : "text-slate-400 hover:text-slate-200"
                 }`}
                 id="btn-tab-twin"
               >
-                <Leaf className="w-4 h-4" />
+                <Leaf className="w-4.5 h-4.5" />
                 <span>Digital Twin</span>
               </button>
               <button
                 onClick={() => setActiveTab("analytics")}
-                className={`px-4 py-2 rounded-lg text-[11px] font-black uppercase tracking-wider flex items-center gap-2 transition-all cursor-pointer ${
+                className={`px-5.5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-3 transition-all cursor-pointer ${
                   activeTab === "analytics"
                     ? "bg-[#a3e635] text-slate-950 shadow-md font-black"
                     : "text-slate-400 hover:text-slate-200"
                 }`}
                 id="btn-tab-analytics"
               >
-                <Activity className="w-4 h-4" />
+                <Activity className="w-4.5 h-4.5" />
                 <span>Analytics & Plots</span>
               </button>
               <button
                 onClick={() => setActiveTab("ai")}
-                className={`px-4 py-2 rounded-lg text-[11px] font-black uppercase tracking-wider flex items-center gap-2 transition-all cursor-pointer ${
+                className={`px-5.5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-3 transition-all cursor-pointer ${
                   activeTab === "ai"
                     ? "bg-[#a3e635] text-slate-950 shadow-md font-black"
                     : "text-slate-400 hover:text-slate-200"
                 }`}
                 id="btn-tab-ai"
               >
-                <BrainCircuit className="w-4 h-4" />
+                <BrainCircuit className="w-4.5 h-4.5" />
                 <span>AI Diagnostics & Chat</span>
               </button>
             </div>
