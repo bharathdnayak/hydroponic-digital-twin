@@ -107,11 +107,11 @@ export default function ControlsPanel({
   };
 
   return (
-    <div className="flex flex-col space-y-4 text-sm font-mono select-none h-full" id="sim-control-sidebar">
+    <div className="flex flex-col space-y-3.5 text-sm font-mono select-none h-full" id="sim-control-sidebar">
       
       {/* Simulation Playback Bar */}
-      <div className="flex flex-col space-y-3.5 bg-slate-950/40 p-4 rounded-lg border border-slate-900" id="sim-playback-box">
-        <span className="text-[11px] text-slate-400 font-extrabold uppercase tracking-wide">
+      <div className="flex flex-col space-y-2.5 bg-slate-950/40 p-3 rounded-lg border border-slate-900" id="sim-playback-box">
+        <span className="text-[10.5px] text-slate-400 font-extrabold uppercase tracking-wide">
           Simulation Control Engine
         </span>
         
@@ -149,12 +149,12 @@ export default function ControlsPanel({
         </div>
 
         {/* Speed Dials */}
-        <div className="flex items-center space-x-1 bg-slate-950/60 p-1 rounded-lg border border-slate-900">
+        <div className="grid grid-cols-4 gap-1 bg-slate-950/60 p-1 rounded-lg border border-slate-900">
           {[1, 2, 5, 10, 30, 50, 100].map((s) => (
             <button
               key={s}
               onClick={() => onSpeedChange(s)}
-              className={`flex-1 py-1.5 rounded-md text-[10.5px] font-black transition-all cursor-pointer ${
+              className={`py-1 rounded-md text-[10px] font-black transition-all cursor-pointer ${
                 speed === s && isRunning
                   ? "bg-[#a3e635] text-slate-950 font-black"
                   : "text-slate-400 hover:text-slate-200"
@@ -745,7 +745,7 @@ export default function ControlsPanel({
       )}
 
       {/* Switches & Safeties */}
-      <div className="flex flex-col space-y-1.5 bg-[#12141c]/50 p-2.5 rounded border border-slate-900" id="automatic-safeties">
+      <div className="flex flex-col space-y-1.5 bg-[#12141c]/50 p-2 rounded border border-slate-900" id="automatic-safeties">
         <span className="text-[8px] text-slate-500 font-bold uppercase tracking-wider mb-0.5">
           Automation Loops
         </span>
@@ -774,11 +774,11 @@ export default function ControlsPanel({
       </div>
 
       {/* Accumulated simulation telemetry readout */}
-      <div className="bg-[#12141c]/60 p-4 rounded-lg border border-slate-900 flex flex-col space-y-2 mt-auto" id="accumulated-ledger">
+      <div className="bg-[#12141c]/60 p-2.5 rounded-lg border border-slate-900 flex flex-col space-y-1.5 mt-auto" id="accumulated-ledger">
         <span className="text-[9px] text-yellow-500 font-bold uppercase tracking-wider">
           Resources Accumulated Ledger
         </span>
-        <div className="grid grid-cols-2 gap-y-2.5 gap-x-4 text-[10px] text-slate-400" id="ledger-stats">
+        <div className="grid grid-cols-2 gap-y-2 gap-x-3.5 text-[10px] text-slate-400" id="ledger-stats">
           <div>
             <span className="text-slate-500 text-[8px] uppercase font-bold">Water Absorbed</span>
             <span className="text-slate-200 font-black block mt-0.5 text-[11px]">{waterUptake.toFixed(2)} L</span>

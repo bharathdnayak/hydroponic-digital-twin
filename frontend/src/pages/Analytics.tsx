@@ -1122,10 +1122,10 @@ export default function Analytics() {
       </header>
 
       {/* Main Grid: Fully Integrated Layout with Workspace Tabs */}
-      <main style={{ flex: 1, minHeight: 0 }} className="w-full mx-auto p-4 lg:p-5 grid grid-cols-1 xl:grid-cols-12 gap-4 overflow-hidden">
+      <main style={{ flex: 1, minHeight: 0 }} className="w-full mx-auto p-2.5 lg:p-3.5 grid grid-cols-1 xl:grid-cols-12 gap-3 min-h-0 overflow-hidden">
         
         {/* COLUMN 1: INTERACTIVE SIMULATOR SIDEBAR */}
-        <section className="xl:col-span-3 bg-[#111217]/50 border border-slate-900 rounded-lg p-3.5 flex flex-col justify-between min-h-0 overflow-y-auto animate-fade-in" id="controls-panel-container">
+        <section className="xl:col-span-3 bg-[#111217]/50 border border-slate-900 rounded-lg p-2.5 flex flex-col justify-between min-h-0 overflow-y-auto animate-fade-in" id="controls-panel-container">
           <ControlsPanel
             scenario={scenario}
             onScenarioChange={handleScenarioChange}
@@ -1233,12 +1233,12 @@ export default function Analytics() {
             <div style={{ height: 'calc(100% - 50px)' }} className="grid grid-cols-1 lg:grid-cols-12 gap-3 min-h-0 flex-1 overflow-hidden animate-fade-in" id="tab-twin-content">
               
               {/* Twin Left column: Bio specs & Solutes Status */}
-              <div className="lg:col-span-7 flex flex-col space-y-3 min-h-0 h-full">
+              <div className="lg:col-span-7 flex flex-col space-y-2.5 min-h-0 h-full overflow-y-auto pr-1">
                 
                 {/* Twin Biological Specs Card */}
                 <div className="flex flex-col border border-slate-900 rounded-lg overflow-hidden bg-[#12141c]/40 shadow-sm shrink-0" id="twin-biological-specs">
                   {/* Visualizer Frame */}
-                  <div className="w-full h-[220px] border-b border-slate-900 p-3 flex flex-col justify-between bg-slate-950/40 relative">
+                  <div className="w-full h-[175px] border-b border-slate-900 p-3 flex flex-col justify-between bg-slate-950/40 relative">
                     <div className="flex items-center justify-between">
                       <span className="text-[10px] text-yellow-500 font-bold uppercase tracking-wide">
                         Digital Twin Model
@@ -1257,20 +1257,18 @@ export default function Analytics() {
                         onHarvest={handleHarvest}
                       />
                     </div>
-                  </div>
-
-                  {/* Specs Readout */}
-                  <div className="w-full p-4 flex flex-col justify-between bg-[#12141c]/20">
+                                  {/* Specs Readout */}
+                  <div className="w-full p-3 flex flex-col justify-between bg-[#12141c]/20">
                     <div className="flex items-start justify-between border-b border-slate-900 pb-2">
                       <div className="flex flex-col">
-                        <span className="text-[11px] text-yellow-500 font-bold uppercase tracking-wider">
+                        <span className="text-[10.5px] text-yellow-500 font-bold uppercase tracking-wider">
                           Bio-Physical Specs
                         </span>
-                        <span className="text-[9.5px] text-slate-500 font-bold uppercase mt-0.5">
+                        <span className="text-[9px] text-slate-500 font-bold uppercase mt-0.5">
                           {cropType} ({growthStage} stage)
                         </span>
                       </div>
-                      <div className={`text-[10.5px] font-bold px-2 py-0.5 rounded border ${
+                      <div className={`text-[10px] font-bold px-2 py-0.5 rounded border ${
                         metrics.health > 85
                           ? "text-emerald-400 bg-emerald-950/40 border-emerald-900/30"
                           : "text-amber-400 bg-amber-950/40 border-amber-900/30"
@@ -1278,49 +1276,49 @@ export default function Analytics() {
                         Health Index: {metrics.health}%
                       </div>
                     </div>
-
+ 
                     {/* Specs Grid */}
-                    <div className="grid grid-cols-2 gap-y-3 gap-x-6 text-[10.5px] text-slate-400 mt-2.5">
+                    <div className="grid grid-cols-3 gap-y-2 gap-x-3.5 text-[10px] text-slate-400 mt-2">
                       <div>
-                        <span className="text-slate-500 block text-[8.5px] uppercase">Growth Progress</span>
+                        <span className="text-slate-500 block text-[8px] uppercase">Growth Progress</span>
                         <span className="text-slate-200 font-bold block mt-0.5">
                           {Math.min(100, Math.round((metrics.age / 28) * 100))}%
                         </span>
                       </div>
                       <div>
-                        <span className="text-slate-500 block text-[8.5px] uppercase">Fresh Biomass</span>
+                        <span className="text-slate-500 block text-[8px] uppercase">Fresh Biomass</span>
                         <span className="text-slate-200 font-bold block mt-0.5">{metrics.freshBiomass.toFixed(1)}g</span>
                       </div>
                       <div>
-                        <span className="text-slate-500 block text-[8.5px] uppercase">Leaf Morphology</span>
+                        <span className="text-slate-500 block text-[8px] uppercase">Leaf Morphology</span>
                         <span className="text-slate-200 font-bold block mt-0.5">{leafColor}</span>
                       </div>
                       <div>
-                        <span className="text-slate-500 block text-[8.5px] uppercase">Lettuce Height</span>
+                        <span className="text-slate-500 block text-[8px] uppercase">Lettuce Height</span>
                         <span className="text-slate-200 font-bold block mt-0.5">{metrics.height.toFixed(1)} cm</span>
                       </div>
                       <div>
-                        <span className="text-slate-500 block text-[8.5px] uppercase">Submerged Root Health</span>
+                        <span className="text-slate-500 block text-[8px] uppercase">Root Health</span>
                         <span className="text-slate-200 font-bold block mt-0.5">{rootHealth}%</span>
                       </div>
                       <div>
-                        <span className="text-slate-500 block text-[8.5px] uppercase">Cellular Stress</span>
+                        <span className="text-slate-500 block text-[8px] uppercase">Cellular Stress</span>
                         <span className="text-slate-200 font-bold block mt-0.5">{stressLevel}%</span>
                       </div>
                     </div>
-                  </div>
+                  </div>    </div>
                 </div>
 
                 {/* Crop Growth Days & Lifecycle Timeline Card */}
-                <div className="bg-[#12141c]/40 border border-slate-900 rounded-lg p-3.5 flex flex-col space-y-3 shadow-sm shrink-0" id="twin-days-timeline-card">
+                <div className="bg-[#12141c]/40 border border-slate-900 rounded-lg p-2.5 flex flex-col space-y-2 shadow-sm shrink-0" id="twin-days-timeline-card">
                   <div className="flex items-center justify-between border-b border-slate-900 pb-2">
                     <div className="flex items-center space-x-2">
                       <span className="text-[12px]">📅</span>
-                      <span className="text-[10px] text-yellow-500 font-bold uppercase tracking-wider">
+                      <span className="text-[9.5px] text-yellow-500 font-bold uppercase tracking-wider">
                         Crop Growth Days & Lifecycle Timeline
                       </span>
                     </div>
-                    <span className="text-[8.5px] text-[#a3e635] bg-[#a3e635]/10 border border-[#a3e635]/20 px-1.5 py-0.5 rounded font-bold font-mono">
+                    <span className="text-[8px] text-[#a3e635] bg-[#a3e635]/10 border border-[#a3e635]/20 px-1.5 py-0.5 rounded font-bold font-mono">
                       Current: Day {metrics.age.toFixed(1)}
                     </span>
                   </div>
@@ -1424,9 +1422,8 @@ export default function Analytics() {
                       </button>
                     </div>
                   </div>
-
-                  {/* Active stage target tips */}
-                  <div className="bg-slate-950/40 border border-slate-900 p-2.5 rounded text-[8.5px] text-slate-400 font-mono mt-1 leading-normal">
+                               {/* Active stage target tips */}
+                  <div className="bg-slate-950/40 border border-slate-900 p-2 rounded text-[8.5px] text-slate-400 font-mono mt-1 leading-normal">
                     <span className="text-[#a3e635] font-bold uppercase tracking-wider">
                       {metrics.age < 5 ? "Germination Guidance" : metrics.age < 14 ? "Seedling Guidance" : metrics.age < 28 ? "Vegetative Guidance" : "Mature Guidance"}:
                     </span>{" "}
@@ -1439,24 +1436,24 @@ export default function Analytics() {
                       : "Canopy fully packed. Monitor for tipburn risk by securing humidity above 50% and ensuring constant fan/exhaust ventilation."}
                   </div>
                 </div>
-
+ 
                 {/* Real-time Macronutrients Solutes Dashboard */}
-                <div className="bg-[#12141c]/60 border border-slate-900 rounded-lg p-3 flex flex-col space-y-2.5 shadow-sm flex-1">
-                  <span className="text-[10px] text-yellow-500 font-bold uppercase tracking-wider flex items-center justify-between">
+                <div className="bg-[#12141c]/60 border border-slate-900 rounded-lg p-2.5 flex flex-col space-y-2 shadow-sm flex-1">
+                  <span className="text-[9.5px] text-yellow-500 font-bold uppercase tracking-wider flex items-center justify-between">
                     <span>Solutes Recipe Status (PPM)</span>
                     <span className="text-[8.5px] text-slate-400">Total TDS: {reservoir.tds} ppm</span>
                   </span>
-
+ 
                   {/* Active deficiencies warning banner */}
                   {activeDeficiencies.length > 0 && (
-                    <div className="bg-amber-950/40 border border-amber-900/30 text-amber-400 px-2.5 py-1.5 rounded text-[8.5px] font-bold flex items-center gap-1.5 animate-pulse">
-                      <span className="w-2 h-2 rounded-full bg-amber-500 block shrink-0" />
+                    <div className="bg-amber-950/40 border border-amber-900/30 text-amber-400 px-2.5 py-1 rounded text-[8.5px] font-bold flex items-center gap-1.5 animate-pulse">
+                      <span className="w-1.5 h-1.5 rounded-full bg-amber-500 block shrink-0" />
                       <span>Deficiency alert: {activeDeficiencies.join(", ")}</span>
                     </div>
                   )}
-
+ 
                   {/* Micro progress columns */}
-                  <div className="grid grid-cols-2 gap-y-2.5 gap-x-5 text-[10.5px] py-1">
+                  <div className="grid grid-cols-2 gap-y-2 gap-x-4 text-[10px] py-1">
                     {/* Nitrogen */}
                     <div className="flex flex-col space-y-1">
                       <div className="flex justify-between font-bold text-slate-400">
@@ -1576,73 +1573,73 @@ export default function Analytics() {
               </div>
 
               {/* Twin Right column: Live Probes & Simulation Timeline */}
-              <div className="lg:col-span-5 flex flex-col space-y-3 min-h-0 h-full">
+              <div className="lg:col-span-5 flex flex-col space-y-2.5 min-h-0 h-full overflow-y-auto pr-1">
                 
                 {/* Probes Display */}
-                <div className="bg-[#12141c]/60 border border-slate-900 rounded-lg p-3 flex flex-col space-y-3 shrink-0" id="live-sensors-card">
+                <div className="bg-[#12141c]/60 border border-slate-900 rounded-lg p-2.5 flex flex-col space-y-2 shrink-0" id="live-sensors-card">
                   <div className="flex items-center justify-between border-b border-slate-900 pb-2">
-                    <span className="text-[11px] text-yellow-500 font-bold uppercase tracking-wider">
+                    <span className="text-[10.5px] text-yellow-500 font-bold uppercase tracking-wider">
                       Live Probes
                     </span>
-                    <span className="flex items-center gap-1 text-[9px] font-bold text-emerald-400 bg-emerald-950/20 border border-emerald-900/30 px-1.5 py-0.5 rounded shadow-sm">
+                    <span className="flex items-center gap-1 text-[8.5px] font-bold text-emerald-400 bg-emerald-950/20 border border-emerald-900/30 px-1.5 py-0.5 rounded shadow-sm">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block animate-pulse" />
                       PUMP SPEED: {environmentalStats.pumpSpeed}%
                     </span>
                   </div>
-
+ 
                   <div className="grid grid-cols-2 gap-2 text-xs text-slate-300 font-mono">
                     {/* pH Probe */}
-                    <div className="bg-[#14151b] p-2.5 rounded border border-slate-900 flex flex-col justify-between min-h-[56px]">
+                    <div className="bg-[#14151b] p-2 rounded border border-slate-900 flex flex-col justify-between min-h-[50px]">
                       <div className="flex justify-between items-start">
-                        <span className="text-slate-500 text-[9px] uppercase font-bold">pH</span>
-                        <span className="text-[9px] text-slate-600 font-bold">pH</span>
+                        <span className="text-slate-500 text-[8.5px] uppercase font-bold">pH</span>
+                        <span className="text-[8.5px] text-slate-650 font-bold">pH</span>
                       </div>
-                      <span className="text-sm font-black text-white mt-1">{reservoir.pH.toFixed(2)}</span>
+                      <span className="text-xs font-black text-white mt-1">{reservoir.pH.toFixed(2)}</span>
                       <div className="w-full bg-slate-950 h-1 rounded overflow-hidden mt-1">
                         <div className="bg-blue-500 h-full" style={{ width: `${Math.min(100, (reservoir.pH / 14) * 100)}%` }} />
                       </div>
                     </div>
-
+ 
                     {/* EC Probe */}
-                    <div className="bg-[#14151b] p-2.5 rounded border border-slate-900 flex flex-col justify-between min-h-[56px]">
+                    <div className="bg-[#14151b] p-2 rounded border border-slate-900 flex flex-col justify-between min-h-[50px]">
                       <div className="flex justify-between items-start">
-                        <span className="text-slate-500 text-[9px] uppercase font-bold">Solute EC</span>
-                        <span className="text-[9px] text-slate-600 font-bold">mS/cm</span>
+                        <span className="text-slate-500 text-[8.5px] uppercase font-bold">Solute EC</span>
+                        <span className="text-[8.5px] text-slate-650 font-bold">mS/cm</span>
                       </div>
-                      <span className="text-sm font-black text-white mt-1">{reservoir.ec.toFixed(2)}</span>
+                      <span className="text-xs font-black text-white mt-1">{reservoir.ec.toFixed(2)}</span>
                       <div className="w-full bg-slate-950 h-1 rounded overflow-hidden mt-1">
                         <div className="bg-cyan-400 h-full" style={{ width: `${Math.min(100, (reservoir.ec / 3.0) * 100)}%` }} />
                       </div>
                     </div>
-
+ 
                     {/* Turbidity */}
-                    <div className="bg-[#14151b] p-2.5 rounded border border-slate-900 flex flex-col justify-between min-h-[56px]">
+                    <div className="bg-[#14151b] p-2 rounded border border-slate-900 flex flex-col justify-between min-h-[50px]">
                       <div className="flex justify-between items-start">
-                        <span className="text-slate-500 text-[9px] uppercase font-bold">Turbidity</span>
-                        <span className="text-[9px] text-slate-600 font-bold">NTU</span>
+                        <span className="text-slate-500 text-[8.5px] uppercase font-bold">Turbidity</span>
+                        <span className="text-[8.5px] text-slate-650 font-bold">NTU</span>
                       </div>
-                      <span className="text-sm font-black text-white mt-1">{currentTurbidity.toFixed(1)}</span>
+                      <span className="text-xs font-black text-white mt-1">{currentTurbidity.toFixed(1)}</span>
                       <div className="w-full bg-slate-950 h-1 rounded overflow-hidden mt-1">
                         <div className="bg-orange-500 h-full" style={{ width: `${Math.min(100, (currentTurbidity / 12) * 100)}%` }} />
                       </div>
                     </div>
-
+ 
                     {/* PAR Light intensity */}
-                    <div className="bg-[#14151b] p-2.5 rounded border border-slate-900 flex flex-col justify-between min-h-[56px]">
+                    <div className="bg-[#14151b] p-2 rounded border border-slate-900 flex flex-col justify-between min-h-[50px]">
                       <div className="flex justify-between items-start">
-                        <span className="text-slate-500 text-[9px] uppercase font-bold">Light PPFD</span>
-                        <span className="text-[9px] text-slate-600 font-bold">µmol</span>
+                        <span className="text-slate-500 text-[8.5px] uppercase font-bold">Light PPFD</span>
+                        <span className="text-[8.5px] text-slate-650 font-bold">µmol</span>
                       </div>
-                      <span className="text-sm font-black text-white mt-1">{environmentalStats.ledIntensity}</span>
+                      <span className="text-xs font-black text-white mt-1">{environmentalStats.ledIntensity}</span>
                       <div className="w-full bg-slate-950 h-1 rounded overflow-hidden mt-1">
                         <div className="bg-yellow-400 h-full" style={{ width: `${Math.min(100, (environmentalStats.ledIntensity / 400) * 100)}%` }} />
                       </div>
                     </div>
                   </div>
                 </div>
-
+ 
                 {/* Timeline Console */}
-                <div className="flex-1 bg-[#12141c]/60 border border-slate-900 rounded-lg p-3 flex flex-col space-y-2 min-h-[160px] shadow-sm overflow-hidden" id="simulation-timeline-card">
+                <div className="flex-1 bg-[#12141c]/60 border border-slate-900 rounded-lg p-2.5 flex flex-col space-y-1.5 min-h-[120px] shadow-sm overflow-hidden" id="simulation-timeline-card">
                   <span className="text-[11px] text-yellow-500 font-bold uppercase tracking-wider">
                     Simulation Timeline Log
                   </span>
