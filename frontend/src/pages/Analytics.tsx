@@ -1235,7 +1235,7 @@ export default function Analytics() {
             <div style={{ height: 'calc(100% - 50px)' }} className="grid grid-cols-1 lg:grid-cols-12 gap-3 min-h-0 flex-1 overflow-hidden animate-fade-in" id="tab-twin-content">
               
               {/* Twin Left column: Bio specs & Solutes Status */}
-              <div className="lg:col-span-7 flex flex-col space-y-2.5 min-h-0 h-full overflow-y-auto pr-1">
+              <div className="lg:col-span-7 flex flex-col space-y-2.5 min-h-0 h-full">
                 
                 {/* Twin Biological Specs Card */}
                 <div className="flex flex-col border border-slate-900 rounded-lg overflow-hidden bg-[#12141c]/40 shadow-sm shrink-0" id="twin-biological-specs">
@@ -1575,7 +1575,7 @@ export default function Analytics() {
               </div>
 
               {/* Twin Right column: Live Probes & Simulation Timeline */}
-              <div className="lg:col-span-5 flex flex-col space-y-2.5 min-h-0 h-full overflow-y-auto pr-1">
+              <div className="lg:col-span-5 flex flex-col space-y-2.5 min-h-0 h-full">
                 
                 {/* Probes Display */}
                 <div className="bg-[#12141c]/60 border border-slate-900 rounded-lg p-2.5 flex flex-col space-y-2 shrink-0" id="live-sensors-card">
