@@ -20,6 +20,9 @@ export default function PlantVisualizer({
 
   // 1. Dynamic Leaf Colors based on health
   const leafColor = useMemo(() => {
+    if (health <= 5) return "#3e2723"; // Dead, rotten dark brown
+    if (health <= 15) return "#5c4033"; // Severely rotten brown
+    if (health <= 30) return "#785f43"; // Decaying brown/yellowish
     if (health < 40) return "#a3e635"; // Sick yellowish-green
     if (stats.targetEC < 0.9) return "#bef264"; // Pale chlorotic
     if (stats.targetPH > 6.6) return "#eab308"; // High pH iron lockout
@@ -29,25 +32,33 @@ export default function PlantVisualizer({
 
   // Leaf tip burn effect
   const tipBurnOpacity = useMemo(() => {
+    if (health <= 10) return 0.95;
+    if (health <= 30) return 0.6;
     if (stats.targetEC > 2.0) return 0.85;
     if (stats.targetEC > 1.8) return 0.4;
     return 0;
-  }, [stats.targetEC]);
+  }, [stats.targetEC, health]);
 
   // Wilt angle based on air temperature & water stress
   const wiltAngle = useMemo(() => {
     let angle = 0;
+    if (health <= 5) angle += 40; // collapsed droop angle
+    else if (health <= 15) angle += 30;
+    else if (health <= 30) angle += 20;
+
     if (airTemp > 29) angle += (airTemp - 29) * 1.8;
     if (!pumpRunning) angle += 15;
-    return Math.min(angle, 35);
-  }, [airTemp, pumpRunning]);
+    return Math.min(angle, 55);
+  }, [airTemp, pumpRunning, health]);
 
-  // Root color based on temperature
+  // Root color based on temperature and overall health
   const rootColor = useMemo(() => {
+    if (health <= 5) return "#3e1c07"; // completely decayed blackish-brown
+    if (health <= 15) return "#5c2e0b"; // severely rotten brown
     if (waterTemp > 24.5) return "#78350f"; // rotten brown
     if (waterTemp > 23.0) return "#b45309"; // muddy amber
     return "#fef08a"; // healthy white-yellow
-  }, [waterTemp]);
+  }, [waterTemp, health]);
 
   // Compute Lettuce rosette leaves
   const leaves = useMemo(() => {
@@ -62,8 +73,21 @@ export default function PlantVisualizer({
     for (let i = 0; i < maxRenderLeaves; i++) {
       const angle = (i * 137.5) % 360;
       const ageFactor = i / maxRenderLeaves; 
-      const sizeX = 0.4 + ageFactor * 0.7;
-      const sizeY = 0.5 + ageFactor * 0.8;
+      let sizeX = 0.4 + ageFactor * 0.7;
+      let sizeY = 0.5 + ageFactor * 0.8;
+
+      // Shrivel effect if health is low
+      if (health <= 5) {
+        sizeX *= 0.55;
+        sizeY *= 0.50; // Droop/collapse
+      } else if (health <= 15) {
+        sizeX *= 0.70;
+        sizeY *= 0.65;
+      } else if (health <= 30) {
+        sizeX *= 0.85;
+        sizeY *= 0.80;
+      }
+
       list.push({
         id: i,
         angle,
@@ -72,9 +96,14 @@ export default function PlantVisualizer({
       });
     }
     return list;
-  }, [leafCount]);
+  }, [leafCount, health]);
 
-  const stretchYMultiplier = ledIntensity < 120 ? 1.4 : 1.0;
+  const stretchYMultiplier = useMemo(() => {
+    if (health <= 5) return 0.45; // severely collapsed/drooped
+    if (health <= 15) return 0.6;
+    if (health <= 30) return 0.8;
+    return ledIntensity < 120 ? 1.4 : 1.0;
+  }, [health, ledIntensity]);
 
   const lettuceScale = useMemo(() => {
     if (stage === "Germination") return 0.22;
@@ -273,16 +302,16 @@ export default function PlantVisualizer({
                     <path
                       d={pathData}
                       fill={leafColor}
-                      stroke={health < 50 ? "#a3e635" : "#14532d"}
+                      stroke={health <= 5 ? "#1a0f08" : health <= 15 ? "#2c1a0e" : health < 50 ? "#a3e635" : "#14532d"}
                       strokeWidth="1.0"
                       opacity="0.94"
                     />
                     <path
                       d="M -15 -62 C -20 -50 -10 -40 0 -25 C 10 -40 20 -50 15 -62"
                       fill="none"
-                      stroke="#86efac"
+                      stroke={health <= 5 ? "#4e3629" : health <= 15 ? "#795c34" : "#86efac"}
                       strokeWidth="0.8"
-                      opacity="0.45"
+                      opacity={health <= 15 ? 0.25 : 0.45}
                     />
                     {tipBurnOpacity > 0 && (
                       <path

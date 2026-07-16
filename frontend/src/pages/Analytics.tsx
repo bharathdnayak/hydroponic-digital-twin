@@ -144,6 +144,8 @@ export default function Analytics() {
 
   // Derived physiological properties for specs
   const leafColor = useMemo(() => {
+    if (metrics.health <= 5) return "Rotten (Necrotic)";
+    if (metrics.health <= 15) return "Decayed Brown";
     if (metrics.health < 40) return "Chlorotic Yellow";
     if (reservoir.pH > 6.6) return "Pale (Iron Lockout)";
     if (reservoir.ec < 0.9) return "Lime Green (Underfed)";
