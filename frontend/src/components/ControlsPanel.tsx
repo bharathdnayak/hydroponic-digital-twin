@@ -236,9 +236,6 @@ export default function ControlsPanel({
               id="select-scenario"
             >
               <option value="Normal Growth">Normal Growth (Baseline)</option>
-              <option value="Tipburn Risk">Tipburn Risk (Transpiration Block)</option>
-              <option value="Algae Bloom">Algae Bloom (Microbiology)</option>
-              <option value="Pump Failure">Pump Failure (Circulation Cut)</option>
             </select>
             <p className="text-xs text-slate-500 leading-relaxed mt-1.5 italic">
               {getScenarioDescription(scenario)}
