@@ -17,6 +17,7 @@ export default function PlantVisualizer({
   onHarvest,
   animationSpeed = 1,
 }: PlantVisualizerProps) {
+  const scaledSpeed = Math.sqrt(animationSpeed);
   const { ledIntensity, flowRate, waterTemp, airTemp } = stats;
   const { stage, health, leafCount, rootLength } = metrics;
 
@@ -348,14 +349,14 @@ export default function PlantVisualizer({
           to { stroke-dashoffset: -200; }
         }
         .water-flow-item-${animationSpeed} {
-          animation: flow ${1.5 / animationSpeed}s linear infinite;
+          animation: flow ${1.5 / scaledSpeed}s linear infinite;
         }
         @keyframes lettuce-sway {
           0%, 100% { transform: rotate(0deg); }
           50% { transform: rotate(1.2deg) skewX(0.4deg); }
         }
         .sway-lettuce-group-${animationSpeed} {
-          animation: lettuce-sway ${5 / animationSpeed}s ease-in-out infinite;
+          animation: lettuce-sway ${5 / scaledSpeed}s ease-in-out infinite;
           transform-origin: 0px 0px;
         }
         .lettuce-leaf-item {
@@ -366,7 +367,7 @@ export default function PlantVisualizer({
           50% { transform: rotate(-1.5deg) scaleX(1.04) skewX(-0.5deg); }
         }
         .root-sway-group-${animationSpeed} {
-          animation: root-sway ${6.8 / animationSpeed}s ease-in-out infinite;
+          animation: root-sway ${6.8 / scaledSpeed}s ease-in-out infinite;
           transform-origin: 200px 240px;
         }
         @keyframes probe-pulse {
@@ -374,7 +375,7 @@ export default function PlantVisualizer({
           50% { opacity: 0.4; }
         }
         .probe-pulse-item-${animationSpeed} {
-          animation: probe-pulse ${2 / animationSpeed}s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+          animation: probe-pulse ${2 / scaledSpeed}s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
       `}</style>
     </div>
