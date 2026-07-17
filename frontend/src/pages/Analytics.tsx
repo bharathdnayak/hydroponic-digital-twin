@@ -42,6 +42,7 @@ const getBiometricsForAge = (age: number) => {
 export default function Analytics() {
   // Simulation States
   const [scenario, setScenario] = useState<string>("Normal Growth");
+  const [activeStatusTab, setActiveStatusTab] = useState<"macro" | "micro" | "fertilizers" | "additives">("macro");
   const [growthStage, setGrowthStage] = useState<"Germination" | "Seedling" | "Vegetative" | "Mature">("Germination");
   const [cropType, setCropType] = useState<string>("Lettuce");
   const [isRunning, setIsRunning] = useState<boolean>(true);
@@ -120,6 +121,42 @@ export default function Analytics() {
   const prevHourRef = useRef<number>(0);
   const lastRoutineLogRef = useRef<string>("");
 
+  const renderStatusProgressBar = (
+    value: number,
+    max: number,
+    label: string,
+    unit: string,
+    minLimit: number,
+    target: number,
+    maxLimit: number,
+    colorClass: string,
+  ) => {
+    const isDeficient = value < minLimit;
+    const isExcessive = value > maxLimit;
+    const percent = Math.min(100, (value / max) * 100);
+    return (
+      <div className="flex flex-col space-y-1" key={label}>
+        <div className="flex justify-between font-bold text-slate-400">
+          <span>{label}</span>
+          <span className="text-slate-200">{value} {unit}</span>
+        </div>
+        <div className="h-2 bg-slate-950 rounded-full overflow-hidden">
+          <div
+            className={`h-full rounded-full transition-all duration-300 ${
+              isDeficient ? "bg-amber-500 animate-pulse" : isExcessive ? "bg-red-500 animate-pulse" : colorClass
+            }`}
+            style={{ width: `${percent}%` }}
+          />
+        </div>
+        <div className="flex justify-between text-[9px] text-slate-500 uppercase font-extrabold px-0.5">
+          <span>Min: {minLimit}</span>
+          <span>Target: {target}</span>
+          <span>Max: {maxLimit}</span>
+        </div>
+      </div>
+    );
+  };
+
   // Auto-scroll timeline logs
   useEffect(() => {
     timelineEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -153,13 +190,14 @@ export default function Analytics() {
   // Active deficiencies evaluation
   const activeDeficiencies = useMemo(() => {
     const issues: string[] = [];
-    if (nutrients.nitrogen < 80) issues.push("Nitrogen Deficient (slow growth)");
-    if (nutrients.nitrogen > 250) issues.push("Nitrogen Toxic (salt stress)");
-    if (nutrients.phosphorus < 20) issues.push("Phosphorus Deficient (stunted roots)");
-    if (nutrients.potassium < 100) issues.push("Potassium Deficient (chlorotic margins)");
-    if (nutrients.calcium < 70) issues.push("Calcium Deficient (Tipburn risk!)");
-    if (nutrients.magnesium < 30) issues.push("Magnesium Deficient (interveinal yellowing)");
-    if (nutrients.sulfur < 30) issues.push("Sulfur Deficient (young-leaf chlorosis)");
+    // Thresholds aligned to real recipe minimums so healthy values never trigger false alarms
+    if (nutrients.nitrogen   < 100) issues.push("Nitrogen Deficient (slow growth)");
+    if (nutrients.nitrogen   > 200) issues.push("Nitrogen Toxic (salt stress)");
+    if (nutrients.phosphorus <  20) issues.push("Phosphorus Deficient (stunted roots)");
+    if (nutrients.potassium  < 150) issues.push("Potassium Deficient (chlorotic margins)");
+    if (nutrients.calcium    <  60) issues.push("Calcium Deficient (Tipburn risk!)");
+    if (nutrients.magnesium  <  15) issues.push("Magnesium Deficient (interveinal yellowing)");
+    if (nutrients.sulfur     <  20) issues.push("Sulfur Deficient (young-leaf chlorosis)");
     return issues;
   }, [nutrients]);
 
@@ -613,13 +651,15 @@ export default function Analytics() {
         const minHealth = nextAge > 70 ? 0 : 5;
         nextHealth = Math.max(minHealth, Math.min(100, nextHealth + healthDelta));
 
-        // Macronutrient penalties
+        // Macronutrient penalties — thresholds must match deficiency alert thresholds exactly
+        // so auto-dosing (which keeps nutrients at target) prevents ALL penalty blocks
         let activePenalty = 0;
-        if (nutrients.nitrogen < 80) activePenalty += 0.8;
-        if (nutrients.calcium < 70) activePenalty += 1.5;
-        if (nutrients.potassium < 100) activePenalty += 0.4;
-        if (nutrients.magnesium < 30) activePenalty += 0.4;
-        
+        if (nutrients.nitrogen   < 100) activePenalty += 0.8;
+        if (nutrients.calcium    <  60) activePenalty += 1.5;
+        if (nutrients.potassium  < 150) activePenalty += 0.4;
+        if (nutrients.magnesium  <  15) activePenalty += 0.4;
+        if (nutrients.sulfur     <  20) activePenalty += 0.3;
+
         if (activePenalty > 0) {
           nextHealth = Math.max(minHealth, nextHealth - activePenalty);
         }
@@ -664,19 +704,41 @@ export default function Analytics() {
         }
 
         if (autoCorrect) {
+          // pH correction
           if (nextPH > 6.2) {
             nextPH = 6.0;
             newTimelineLogs.push(`Auto dosing: Injected pH Down. Corrected pH to 6.0.`);
+          } else if (nextPH < 5.8) {
+            nextPH = 6.0;
+            newTimelineLogs.push(`Auto dosing: Injected pH Up. Corrected pH to 6.0.`);
           }
+          // EC / TDS correction
           if (nextEC < environmentalStats.targetEC) {
             nextEC = environmentalStats.targetEC;
             tempNutrientsFed += 0.8;
             newTimelineLogs.push(`Auto dosing: Nutrient pump active. Realigned EC to target ${environmentalStats.targetEC} mS/cm.`);
           }
+          // Water-level correction
           if (nextVol < 80.0) {
             nextVol = 95.0;
             newTimelineLogs.push(`Auto-Refill Valve: Reservoir fell below 80L. Automatically topped off water to 95.0 L.`);
           }
+          // *** Critical fix: top-up individual nutrient ppm so health-penalty blocks never fire ***
+          // When auto-dosing is on the system should maintain the reference recipe concentrations.
+          setNutrients((prevNutrients) => {
+            let changed = false;
+            const patched = { ...prevNutrients };
+            if (patched.nitrogen   < 100) { patched.nitrogen   = LETTUCE_REFERENCE_RECIPE.nitrogen;   changed = true; }
+            if (patched.phosphorus <  20) { patched.phosphorus = LETTUCE_REFERENCE_RECIPE.phosphorus; changed = true; }
+            if (patched.potassium  < 150) { patched.potassium  = LETTUCE_REFERENCE_RECIPE.potassium;  changed = true; }
+            if (patched.calcium    <  60) { patched.calcium    = LETTUCE_REFERENCE_RECIPE.calcium;    changed = true; }
+            if (patched.magnesium  <  15) { patched.magnesium  = LETTUCE_REFERENCE_RECIPE.magnesium;  changed = true; }
+            if (patched.sulfur     <  20) { patched.sulfur     = LETTUCE_REFERENCE_RECIPE.sulfur;     changed = true; }
+            if (changed) {
+              newTimelineLogs.push(`Auto dosing: Nutrient levels low — topped up N/P/K/Ca/Mg/S to reference recipe.`);
+            }
+            return changed ? patched : prevNutrients;
+          });
         } else {
           nextPH = Math.max(3.8, Math.min(9.5, nextPH));
         }
@@ -1003,136 +1065,82 @@ export default function Analytics() {
                   </div>
                 </div>
 
-                {/* Real-time Macronutrients Solutes Dashboard */}
-                <div className="bg-[#12141c]/60 border border-slate-900 rounded-lg p-3.5 flex flex-col space-y-3.5 shadow-sm flex-1">
-                  <span className="text-xs text-yellow-500 font-extrabold uppercase tracking-wider flex items-center justify-between">
-                    <span>Solutes Recipe Status (PPM)</span>
-                    <span className="text-[10px] text-slate-400">Total TDS: {reservoir.tds} ppm</span>
-                  </span>
+                {/* Real-time Solutes Dashboard */}
+                <div className="bg-[#12141c]/60 border border-slate-900 rounded-lg p-3.5 flex flex-col space-y-3 shadow-sm flex-1">
+                  <div className="flex flex-col space-y-2 shrink-0">
+                    <span className="text-xs text-yellow-500 font-extrabold uppercase tracking-wider flex items-center justify-between">
+                      <span>Solutes Recipe Status</span>
+                      <span className="text-[10px] text-slate-400">TDS: {reservoir.tds} ppm</span>
+                    </span>
+
+                    {/* Category tabs */}
+                    <div className="flex space-x-1 text-[9px] font-black uppercase tracking-wider border-b border-slate-900 pb-1.5">
+                      {(["macro", "micro", "fertilizers", "additives"] as const).map((tab) => (
+                        <button
+                          key={tab}
+                          onClick={() => setActiveStatusTab(tab)}
+                          className={`px-2 py-0.5 rounded transition-colors cursor-pointer ${
+                            activeStatusTab === tab
+                              ? "bg-emerald-950/40 text-emerald-400 border border-emerald-900/35"
+                              : "text-slate-500 hover:text-slate-300"
+                          }`}
+                        >
+                          {tab === "macro" ? "Macro" : tab === "micro" ? "Micro" : tab === "fertilizers" ? "Fertilizers" : "Additives"}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
 
                   {/* Active deficiencies warning banner */}
                   {activeDeficiencies.length > 0 && (
-                    <div className="bg-amber-950/40 border border-amber-900/30 text-amber-400 px-3 py-2 rounded-lg text-[10px] font-bold flex items-center gap-1.5 animate-pulse">
+                    <div className="bg-amber-950/40 border border-amber-900/30 text-amber-400 px-3 py-2 rounded-lg text-[10px] font-bold flex items-center gap-1.5 animate-pulse shrink-0">
                       <span className="w-1.5 h-1.5 rounded-full bg-amber-500 block shrink-0" />
                       <span>Deficiency alert: {activeDeficiencies.join(", ")}</span>
                     </div>
                   )}
 
-                  {/* Micro progress columns */}
-                  <div className="grid grid-cols-2 gap-y-3.5 gap-x-6 text-xs py-1.5">
-                    {/* Nitrogen */}
-                    <div className="flex flex-col space-y-1.5">
-                      <div className="flex justify-between font-bold text-slate-400">
-                        <span>Nitrogen (N)</span>
-                        <span className="text-slate-200">{nutrients.nitrogen} ppm</span>
-                      </div>
-                      <div className="h-2 bg-slate-950 rounded-full overflow-hidden">
-                        <div 
-                          className={`h-full rounded-full transition-all duration-300 ${nutrients.nitrogen < 80 ? 'bg-amber-500 animate-pulse' : 'bg-blue-500'}`} 
-                          style={{ width: `${Math.min(100, (nutrients.nitrogen / 300) * 100)}%` }} 
-                        />
-                      </div>
-                      <div className="flex justify-between text-[9px] text-slate-655 uppercase font-extrabold">
-                        <span>Min: 80</span>
-                        <span>Target: 150</span>
-                        <span>Max: 250</span>
-                      </div>
-                    </div>
-
-                    {/* Phosphorus */}
-                    <div className="flex flex-col space-y-1.5">
-                      <div className="flex justify-between font-bold text-slate-400">
-                        <span>Phosphorus (P)</span>
-                        <span className="text-slate-200">{nutrients.phosphorus} ppm</span>
-                      </div>
-                      <div className="h-2 bg-slate-950 rounded-full overflow-hidden">
-                        <div 
-                          className={`h-full rounded-full transition-all duration-300 ${nutrients.phosphorus < 20 ? 'bg-amber-500 animate-pulse' : 'bg-purple-500'}`} 
-                          style={{ width: `${Math.min(100, (nutrients.phosphorus / 150) * 100)}%` }} 
-                        />
-                      </div>
-                      <div className="flex justify-between text-[9px] text-slate-655 uppercase font-extrabold">
-                        <span>Min: 20</span>
-                        <span>Target: 50</span>
-                        <span>Max: 100</span>
-                      </div>
-                    </div>
-
-                    {/* Potassium */}
-                    <div className="flex flex-col space-y-1.5">
-                      <div className="flex justify-between font-bold text-slate-400">
-                        <span>Potassium (K)</span>
-                        <span className="text-slate-200">{nutrients.potassium} ppm</span>
-                      </div>
-                      <div className="h-2 bg-slate-950 rounded-full overflow-hidden">
-                        <div 
-                          className={`h-full rounded-full transition-all duration-300 ${nutrients.potassium < 100 ? 'bg-amber-500 animate-pulse' : 'bg-yellow-500'}`} 
-                          style={{ width: `${Math.min(100, (nutrients.potassium / 400) * 100)}%` }} 
-                        />
-                      </div>
-                      <div className="flex justify-between text-[9px] text-slate-655 uppercase font-extrabold">
-                        <span>Min: 100</span>
-                        <span>Target: 200</span>
-                        <span>Max: 350</span>
-                      </div>
-                    </div>
-
-                    {/* Calcium */}
-                    <div className="flex flex-col space-y-1.5">
-                      <div className="flex justify-between font-bold text-slate-400">
-                        <span>Calcium (Ca)</span>
-                        <span className="text-slate-200">{nutrients.calcium} ppm</span>
-                      </div>
-                      <div className="h-2 bg-slate-950 rounded-full overflow-hidden">
-                        <div 
-                          className={`h-full rounded-full transition-all duration-300 ${nutrients.calcium < 70 ? 'bg-red-500 animate-pulse' : 'bg-red-400'}`} 
-                          style={{ width: `${Math.min(100, (nutrients.calcium / 300) * 100)}%` }} 
-                        />
-                      </div>
-                      <div className="flex justify-between text-[9px] text-slate-655 uppercase font-extrabold">
-                        <span>Min: 70</span>
-                        <span>Target: 150</span>
-                        <span>Max: 250</span>
-                      </div>
-                    </div>
-
-                    {/* Magnesium */}
-                    <div className="flex flex-col space-y-1.5">
-                      <div className="flex justify-between font-bold text-slate-400">
-                        <span>Magnesium (Mg)</span>
-                        <span className="text-slate-200">{nutrients.magnesium} ppm</span>
-                      </div>
-                      <div className="h-2 bg-slate-950 rounded-full overflow-hidden">
-                        <div 
-                          className={`h-full rounded-full transition-all duration-300 ${nutrients.magnesium < 10 ? 'bg-amber-500 animate-pulse' : 'bg-pink-500'}`} 
-                          style={{ width: `${Math.min(100, (nutrients.magnesium / 150) * 100)}%` }} 
-                        />
-                      </div>
-                      <div className="flex justify-between text-[9px] text-slate-655 uppercase font-extrabold">
-                        <span>Min: 10</span>
-                        <span>Target: 60</span>
-                        <span>Max: 100</span>
-                      </div>
-                    </div>
-
-                    {/* Sulfur */}
-                    <div className="flex flex-col space-y-1.5">
-                      <div className="flex justify-between font-bold text-slate-400">
-                        <span>Sulfur (S)</span>
-                        <span className="text-slate-200">{nutrients.sulfur} ppm</span>
-                      </div>
-                      <div className="h-2 bg-slate-950 rounded-full overflow-hidden">
-                        <div 
-                          className={`h-full rounded-full transition-all duration-300 ${nutrients.sulfur < 20 ? 'bg-amber-500 animate-pulse' : 'bg-teal-500'}`} 
-                          style={{ width: `${Math.min(100, (nutrients.sulfur / 150) * 100)}%` }} 
-                        />
-                      </div>
-                      <div className="flex justify-between text-[9px] text-slate-655 uppercase font-extrabold">
-                        <span>Min: 20</span>
-                        <span>Target: 80</span>
-                        <span>Max: 150</span>
-                      </div>
-                    </div>
+                  {/* Progress bars */}
+                  <div className="grid grid-cols-2 gap-y-3 gap-x-5 text-xs overflow-y-auto flex-grow pr-1">
+                    {activeStatusTab === "macro" && (
+                      <>
+                        {renderStatusProgressBar(nutrients.nitrogen,  300, "Nitrogen (N)",   "ppm",  100,  150,  200, "bg-blue-500")}
+                        {renderStatusProgressBar(nutrients.phosphorus, 100, "Phosphorus (P)", "ppm",   20,   31,   50, "bg-purple-500")}
+                        {renderStatusProgressBar(nutrients.potassium,  350, "Potassium (K)",  "ppm",  150,  210,  280, "bg-yellow-500")}
+                        {renderStatusProgressBar(nutrients.calcium,    200, "Calcium (Ca)",   "ppm",   60,   90,  140, "bg-red-400")}
+                        {renderStatusProgressBar(nutrients.magnesium,   80, "Magnesium (Mg)", "ppm",   15,   24,   40, "bg-pink-500")}
+                        {renderStatusProgressBar(nutrients.sulfur,      80, "Sulfur (S)",     "ppm",   20,   32,   55, "bg-teal-500")}
+                      </>
+                    )}
+                    {activeStatusTab === "micro" && (
+                      <>
+                        {renderStatusProgressBar(nutrients.iron,       3,     "Iron (Fe)",        "ppm", 0.50,  1.00,  2.00,  "bg-orange-500")}
+                        {renderStatusProgressBar(nutrients.manganese,  1,     "Manganese (Mn)",   "ppm", 0.10,  0.25,  0.60,  "bg-lime-500")}
+                        {renderStatusProgressBar(nutrients.zinc,       0.5,   "Zinc (Zn)",        "ppm", 0.05,  0.13,  0.30,  "bg-cyan-500")}
+                        {renderStatusProgressBar(nutrients.boron,      0.5,   "Boron (B)",        "ppm", 0.08,  0.16,  0.30,  "bg-sky-500")}
+                        {renderStatusProgressBar(nutrients.copper,     0.1,   "Copper (Cu)",      "ppm", 0.010, 0.023, 0.050, "bg-violet-500")}
+                        {renderStatusProgressBar(nutrients.molybdenum, 0.1,   "Molybdenum (Mo)",  "ppm", 0.010, 0.024, 0.050, "bg-amber-500")}
+                        {renderStatusProgressBar(nutrients.chlorine,   5,     "Chlorine (Cl)",    "ppm", 0.00,  4.90,  5.00,  "bg-emerald-500")}
+                      </>
+                    )}
+                    {activeStatusTab === "fertilizers" && (
+                      <>
+                        {renderStatusProgressBar(nutrients.calciumNitrate,          60,  "Calcium Nitrate",   "g/100L",  15,   22.7,  40,  "bg-blue-400")}
+                        {renderStatusProgressBar(nutrients.potassiumNitrate,         30, "Potassium Nitrate", "g/100L",   8,   11.9,  20,  "bg-yellow-400")}
+                        {renderStatusProgressBar(nutrients.monoammoniumPhosphate,    10, "MAP (Phos)",        "g/100L",   1,    3.0,   6,  "bg-purple-400")}
+                        {renderStatusProgressBar(nutrients.epsomSalts,               20, "Epsom Salts",       "g/100L",   3,    6.5,  12,  "bg-pink-400")}
+                        {renderStatusProgressBar(nutrients.ironChelate,               5, "Iron Chelate",      "g/100L",   0.5,  1.0,   3,  "bg-orange-400")}
+                        {renderStatusProgressBar(nutrients.traceMicronutrientBlend,   3, "Trace Blend",       "g/100L",   0.2,  0.5,   1,  "bg-teal-400")}
+                      </>
+                    )}
+                    {activeStatusTab === "additives" && (
+                      <>
+                        {renderStatusProgressBar(nutrients.phosphoricAcid,           20, "Phosphoric Acid",  "mL/100L",  2.6,  5.3,  7.9,  "bg-red-500")}
+                        {renderStatusProgressBar(nutrients.nitricAcid,               15, "Nitric Acid",      "mL/100L",  2.6,  4.0,  5.3,  "bg-sky-400")}
+                        {renderStatusProgressBar(nutrients.potassiumHydroxide,       15, "KOH (pH Up)",      "mL/100L",  2.6,  4.0,  5.3,  "bg-amber-400")}
+                        {renderStatusProgressBar(nutrients.bacillusAmyloliquefaciens, 50, "Bacillus amyloliq.","mL/100L", 13.2, 19.8, 26.4, "bg-emerald-400")}
+                        {renderStatusProgressBar(nutrients.hypochlorousAcid,          80, "Hypochlorous Acid","mL/100L", 26.4, 39.6, 52.8, "bg-indigo-400")}
+                      </>
+                    )}
                   </div>
                 </div>
 

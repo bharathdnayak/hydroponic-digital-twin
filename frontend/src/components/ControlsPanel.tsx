@@ -74,6 +74,52 @@ export default function ControlsPanel({
   onWarpFactorChange,
 }: ControlsPanelProps) {
   const [controlTab, setControlTab] = useState<"Scenarios" | "Tuning" | "Nutrients" | "Days">("Scenarios");
+  const [expandedNutrientSec, setExpandedNutrientSec] = useState<"macro" | "micro" | "fertilizers" | "additives">("macro");
+
+  const renderNutrientInput = (
+    key: keyof NutrientSolution,
+    label: string,
+    min: number,
+    max: number,
+    step: number,
+    unit: string,
+    accentClass: string,
+  ) => {
+    const value = nutrients[key] ?? 0;
+    return (
+      <div className="flex flex-col space-y-1.5 shrink-0 bg-[#14151b]/40 p-2.5 rounded-lg border border-slate-900/60" key={key}>
+        <div className="flex justify-between text-xs font-bold px-0.5">
+          <span className="text-slate-400 font-bold">{label}</span>
+          <span className="text-white font-black">{value} {unit}</span>
+        </div>
+        <div className="flex items-center space-x-2">
+          <button
+            type="button"
+            onClick={() => onNutrientChange(key, parseFloat(Math.max(min, value - step).toFixed(3)))}
+            className="w-5.5 h-5.5 rounded bg-slate-950 hover:bg-slate-900 border border-slate-850 text-slate-400 hover:text-white flex items-center justify-center font-black text-xs cursor-pointer select-none active:scale-90 transition-all"
+          >
+            -
+          </button>
+          <input
+            type="range"
+            min={min}
+            max={max}
+            step={step}
+            value={value}
+            onChange={(e) => onNutrientChange(key, parseFloat(parseFloat(e.target.value).toFixed(3)))}
+            className={`flex-1 h-1.5 bg-slate-950 border border-slate-900/60 rounded-lg appearance-none cursor-pointer ${accentClass}`}
+          />
+          <button
+            type="button"
+            onClick={() => onNutrientChange(key, parseFloat(Math.min(max, value + step).toFixed(3)))}
+            className="w-5.5 h-5.5 rounded bg-slate-950 hover:bg-slate-900 border border-slate-855 text-slate-400 hover:text-white flex items-center justify-center font-black text-xs cursor-pointer select-none active:scale-90 transition-all"
+          >
+            +
+          </button>
+        </div>
+      </div>
+    );
+  };
 
   // Handle slider updates
   const handleSliderChange = (key: keyof LettuceEnvironmentalStats, val: number) => {
@@ -709,10 +755,10 @@ export default function ControlsPanel({
       )}
 
       {controlTab === "Nutrients" && (
-        <div className="flex flex-col space-y-4 bg-slate-900/20 p-4 rounded-lg border border-slate-900 overflow-y-auto flex-grow min-h-0" id="tab-nutrients-panel">
-          <div className="flex justify-between items-center border-b border-slate-950 pb-2.5 mb-1.5 shrink-0">
+        <div className="flex flex-col space-y-3 bg-slate-900/20 p-4 rounded-lg border border-slate-900 overflow-y-auto flex-grow min-h-0" id="tab-nutrients-panel">
+          <div className="flex justify-between items-center border-b border-slate-950 pb-2 mb-1.5 shrink-0">
             <span className="text-xs text-yellow-500 font-black uppercase tracking-wide">
-              Macronutrient Tuning
+              Nutrient Recipe Tuning
             </span>
             <button
               onClick={onResetNutrients}
@@ -722,202 +768,94 @@ export default function ControlsPanel({
             </button>
           </div>
 
-          {/* Nitrogen N */}
-          <div className="flex flex-col space-y-2 shrink-0 bg-[#14151b]/40 p-2.5 rounded-lg border border-slate-900/60">
-            <div className="flex justify-between text-xs font-bold px-0.5">
-              <span className="text-slate-400 font-bold">Nitrogen (N)</span>
-              <span className="text-white font-black">{nutrients.nitrogen} ppm</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <button
-                type="button"
-                onClick={() => onNutrientChange("nitrogen", Math.max(0, nutrients.nitrogen - 5))}
-                className="w-5.5 h-5.5 rounded bg-slate-950 hover:bg-slate-900 border border-slate-850 text-slate-400 hover:text-white flex items-center justify-center font-black text-xs cursor-pointer select-none active:scale-90 transition-all"
-              >
-                -
-              </button>
-              <input
-                type="range"
-                min="0"
-                max="300"
-                step="5"
-                value={nutrients.nitrogen}
-                onChange={(e) => onNutrientChange("nitrogen", parseInt(e.target.value))}
-                className="flex-1 h-1.5 bg-slate-950 border border-slate-900/60 rounded-lg appearance-none cursor-pointer accent-[#3b82f6]"
-              />
-              <button
-                type="button"
-                onClick={() => onNutrientChange("nitrogen", Math.min(300, nutrients.nitrogen + 5))}
-                className="w-5.5 h-5.5 rounded bg-slate-950 hover:bg-slate-900 border border-slate-855 text-slate-400 hover:text-white flex items-center justify-center font-black text-xs cursor-pointer select-none active:scale-90 transition-all"
-              >
-                +
-              </button>
-            </div>
+          {/* Accordion Tabs */}
+          <div className="grid grid-cols-2 gap-1.5 shrink-0 text-[10px] font-bold">
+            <button
+              onClick={() => setExpandedNutrientSec("macro")}
+              className={`py-1.5 px-2 rounded-lg border transition-all cursor-pointer ${
+                expandedNutrientSec === "macro"
+                  ? "bg-emerald-950/40 border-emerald-500 text-emerald-400"
+                  : "bg-slate-900/40 border-slate-950 text-slate-400 hover:text-slate-250"
+              }`}
+            >
+              Macro Elements
+            </button>
+            <button
+              onClick={() => setExpandedNutrientSec("micro")}
+              className={`py-1.5 px-2 rounded-lg border transition-all cursor-pointer ${
+                expandedNutrientSec === "micro"
+                  ? "bg-emerald-950/40 border-emerald-500 text-emerald-400"
+                  : "bg-slate-900/40 border-slate-950 text-slate-400 hover:text-slate-250"
+              }`}
+            >
+              Micro Elements
+            </button>
+            <button
+              onClick={() => setExpandedNutrientSec("fertilizers")}
+              className={`py-1.5 px-2 rounded-lg border transition-all cursor-pointer ${
+                expandedNutrientSec === "fertilizers"
+                  ? "bg-emerald-950/40 border-emerald-500 text-emerald-400"
+                  : "bg-slate-900/40 border-slate-950 text-slate-400 hover:text-slate-250"
+              }`}
+            >
+              Salt Fertilizers
+            </button>
+            <button
+              onClick={() => setExpandedNutrientSec("additives")}
+              className={`py-1.5 px-2 rounded-lg border transition-all cursor-pointer ${
+                expandedNutrientSec === "additives"
+                  ? "bg-emerald-950/40 border-emerald-500 text-emerald-400"
+                  : "bg-slate-900/40 border-slate-950 text-slate-400 hover:text-slate-250"
+              }`}
+            >
+              Water Additives
+            </button>
           </div>
 
-          {/* Phosphorus P */}
-          <div className="flex flex-col space-y-2 shrink-0 bg-[#14151b]/40 p-2.5 rounded-lg border border-slate-900/60">
-            <div className="flex justify-between text-xs font-bold px-0.5">
-              <span className="text-slate-400 font-bold">Phosphorus (P)</span>
-              <span className="text-white font-black">{nutrients.phosphorus} ppm</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <button
-                type="button"
-                onClick={() => onNutrientChange("phosphorus", Math.max(0, nutrients.phosphorus - 5))}
-                className="w-5.5 h-5.5 rounded bg-slate-950 hover:bg-slate-900 border border-slate-850 text-slate-400 hover:text-white flex items-center justify-center font-black text-xs cursor-pointer select-none active:scale-90 transition-all"
-              >
-                -
-              </button>
-              <input
-                type="range"
-                min="0"
-                max="150"
-                step="5"
-                value={nutrients.phosphorus}
-                onChange={(e) => onNutrientChange("phosphorus", parseInt(e.target.value))}
-                className="flex-1 h-1.5 bg-slate-950 border border-slate-900/60 rounded-lg appearance-none cursor-pointer accent-[#a855f7]"
-              />
-              <button
-                type="button"
-                onClick={() => onNutrientChange("phosphorus", Math.min(150, nutrients.phosphorus + 5))}
-                className="w-5.5 h-5.5 rounded bg-slate-950 hover:bg-slate-900 border border-slate-855 text-slate-400 hover:text-white flex items-center justify-center font-black text-xs cursor-pointer select-none active:scale-90 transition-all"
-              >
-                +
-              </button>
-            </div>
-          </div>
+          <div className="flex flex-col space-y-2.5 overflow-y-auto flex-grow pr-1">
+            {expandedNutrientSec === "macro" && (
+              <>
+                {renderNutrientInput("nitrogen",   "Nitrogen (N) — Rapid leaf growth",  0, 300,  5,  "ppm", "accent-[#3b82f6]")}
+                {renderNutrientInput("phosphorus",  "Phosphorus (P) — Root expansion",   0, 100,  1,  "ppm", "accent-[#a855f7]")}
+                {renderNutrientInput("potassium",   "Potassium (K) — Leaf crispness",    0, 350,  5,  "ppm", "accent-[#eab308]")}
+                {renderNutrientInput("calcium",     "Calcium (Ca) — Prevent tipburn",    0, 200,  5,  "ppm", "accent-[#ef4444]")}
+                {renderNutrientInput("magnesium",   "Magnesium (Mg) — Photosynthesis",   0,  80,  2,  "ppm", "accent-[#ec4899]")}
+                {renderNutrientInput("sulfur",      "Sulfur (S) — Plant proteins",       0,  80,  2,  "ppm", "accent-[#14b8a6]")}
+              </>
+            )}
 
-          {/* Potassium K */}
-          <div className="flex flex-col space-y-2 shrink-0 bg-[#14151b]/40 p-2.5 rounded-lg border border-slate-900/60">
-            <div className="flex justify-between text-xs font-bold px-0.5">
-              <span className="text-slate-400 font-bold">Potassium (K)</span>
-              <span className="text-white font-black">{nutrients.potassium} ppm</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <button
-                type="button"
-                onClick={() => onNutrientChange("potassium", Math.max(0, nutrients.potassium - 10))}
-                className="w-5.5 h-5.5 rounded bg-slate-950 hover:bg-slate-900 border border-slate-850 text-slate-400 hover:text-white flex items-center justify-center font-black text-xs cursor-pointer select-none active:scale-90 transition-all"
-              >
-                -
-              </button>
-              <input
-                type="range"
-                min="0"
-                max="400"
-                step="10"
-                value={nutrients.potassium}
-                onChange={(e) => onNutrientChange("potassium", parseInt(e.target.value))}
-                className="flex-1 h-1.5 bg-slate-950 border border-slate-900/60 rounded-lg appearance-none cursor-pointer accent-[#eab308]"
-              />
-              <button
-                type="button"
-                onClick={() => onNutrientChange("potassium", Math.min(400, nutrients.potassium + 10))}
-                className="w-5.5 h-5.5 rounded bg-slate-950 hover:bg-slate-900 border border-slate-855 text-slate-400 hover:text-white flex items-center justify-center font-black text-xs cursor-pointer select-none active:scale-90 transition-all"
-              >
-                +
-              </button>
-            </div>
-          </div>
+            {expandedNutrientSec === "micro" && (
+              <>
+                {renderNutrientInput("iron",       "Iron (Fe) — Prevent leaf yellowing",    0, 3,   0.05,  "ppm", "accent-[#f97316]")}
+                {renderNutrientInput("manganese",  "Manganese (Mn) — Nitrogen metabolism",  0, 1,   0.01,  "ppm", "accent-[#84cc16]")}
+                {renderNutrientInput("zinc",       "Zinc (Zn) — Activate growth hormones",  0, 0.5, 0.005, "ppm", "accent-[#06b6d4]")}
+                {renderNutrientInput("boron",      "Boron (B) — Stable cell walls",         0, 0.5, 0.005, "ppm", "accent-[#3b82f6]")}
+                {renderNutrientInput("copper",     "Copper (Cu) — Immune defenses",         0, 0.1, 0.001, "ppm", "accent-[#a855f7]")}
+                {renderNutrientInput("molybdenum", "Molybdenum (Mo) — Convert nitrates",    0, 0.1, 0.001, "ppm", "accent-[#eab308]")}
+                {renderNutrientInput("chlorine",   "Chlorine (Cl) — Keep under 5.0 ppm",   0, 5,   0.1,   "ppm", "accent-[#10b981]")}
+              </>
+            )}
 
-          {/* Calcium Ca */}
-          <div className="flex flex-col space-y-2 shrink-0 bg-[#14151b]/40 p-2.5 rounded-lg border border-slate-900/60">
-            <div className="flex justify-between text-xs font-bold px-0.5">
-              <span className="text-slate-400">Calcium (Ca)</span>
-              <span className="text-white font-black">{nutrients.calcium} ppm</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <button
-                type="button"
-                onClick={() => onNutrientChange("calcium", Math.max(0, nutrients.calcium - 5))}
-                className="w-5.5 h-5.5 rounded bg-slate-950 hover:bg-slate-900 border border-slate-850 text-slate-400 hover:text-white flex items-center justify-center font-black text-xs cursor-pointer select-none active:scale-90 transition-all"
-              >
-                -
-              </button>
-              <input
-                type="range"
-                min="0"
-                max="300"
-                step="5"
-                value={nutrients.calcium}
-                onChange={(e) => onNutrientChange("calcium", parseInt(e.target.value))}
-                className="flex-1 h-1.5 bg-slate-950 border border-slate-900/60 rounded-lg appearance-none cursor-pointer accent-[#ef4444]"
-              />
-              <button
-                type="button"
-                onClick={() => onNutrientChange("calcium", Math.min(300, nutrients.calcium + 5))}
-                className="w-5.5 h-5.5 rounded bg-slate-950 hover:bg-slate-900 border border-slate-855 text-slate-400 hover:text-white flex items-center justify-center font-black text-xs cursor-pointer select-none active:scale-90 transition-all"
-              >
-                +
-              </button>
-            </div>
-          </div>
+            {expandedNutrientSec === "fertilizers" && (
+              <>
+                {renderNutrientInput("calciumNitrate",         "Calcium Nitrate — Ca & NO₃",     0, 60,  0.5,  "g/100L", "accent-[#3b82f6]")}
+                {renderNutrientInput("potassiumNitrate",        "Potassium Nitrate — K & NO₃",    0, 30,  0.5,  "g/100L", "accent-[#eab308]")}
+                {renderNutrientInput("monoammoniumPhosphate",   "MAP — NH₄⁺ & Phosphorus",        0, 10,  0.1,  "g/100L", "accent-[#a855f7]")}
+                {renderNutrientInput("epsomSalts",              "Epsom Salts — Mg & Sulfur",      0, 20,  0.5,  "g/100L", "accent-[#ec4899]")}
+                {renderNutrientInput("ironChelate",             "Iron Chelate (Fe-DTPA)",         0,  5,  0.1,  "g/100L", "accent-[#f97316]")}
+                {renderNutrientInput("traceMicronutrientBlend", "Trace Micronutrient Blend",      0,  3,  0.05, "g/100L", "accent-[#14b8a6]")}
+              </>
+            )}
 
-          {/* Magnesium Mg */}
-          <div className="flex flex-col space-y-2 shrink-0 bg-[#14151b]/40 p-2.5 rounded-lg border border-slate-900/60">
-            <div className="flex justify-between text-xs font-bold px-0.5">
-              <span className="text-slate-400">Magnesium (Mg)</span>
-              <span className="text-white font-black">{nutrients.magnesium} ppm</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <button
-                type="button"
-                onClick={() => onNutrientChange("magnesium", Math.max(0, nutrients.magnesium - 5))}
-                className="w-5.5 h-5.5 rounded bg-slate-950 hover:bg-slate-900 border border-slate-850 text-slate-400 hover:text-white flex items-center justify-center font-black text-xs cursor-pointer select-none active:scale-90 transition-all"
-              >
-                -
-              </button>
-              <input
-                type="range"
-                min="0"
-                max="150"
-                step="5"
-                value={nutrients.magnesium}
-                onChange={(e) => onNutrientChange("magnesium", parseInt(e.target.value))}
-                className="flex-1 h-1.5 bg-slate-950 border border-slate-900/60 rounded-lg appearance-none cursor-pointer accent-[#ec4899]"
-              />
-              <button
-                type="button"
-                onClick={() => onNutrientChange("magnesium", Math.min(150, nutrients.magnesium + 5))}
-                className="w-5.5 h-5.5 rounded bg-slate-950 hover:bg-slate-900 border border-slate-855 text-slate-400 hover:text-white flex items-center justify-center font-black text-xs cursor-pointer select-none active:scale-90 transition-all"
-              >
-                +
-              </button>
-            </div>
-          </div>
-
-          {/* Sulfur S */}
-          <div className="flex flex-col space-y-2 shrink-0 bg-[#14151b]/40 p-2.5 rounded-lg border border-slate-900/60">
-            <div className="flex justify-between text-xs font-bold px-0.5">
-              <span className="text-slate-400">Sulfur (S)</span>
-              <span className="text-white font-black">{nutrients.sulfur} ppm</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <button
-                type="button"
-                onClick={() => onNutrientChange("sulfur", Math.max(0, nutrients.sulfur - 5))}
-                className="w-5.5 h-5.5 rounded bg-slate-950 hover:bg-slate-900 border border-slate-850 text-slate-400 hover:text-white flex items-center justify-center font-black text-xs cursor-pointer select-none active:scale-90 transition-all"
-              >
-                -
-              </button>
-              <input
-                type="range"
-                min="0"
-                max="150"
-                step="5"
-                value={nutrients.sulfur}
-                onChange={(e) => onNutrientChange("sulfur", parseInt(e.target.value))}
-                className="flex-1 h-1.5 bg-slate-950 border border-slate-900/60 rounded-lg appearance-none cursor-pointer accent-[#14b8a6]"
-              />
-              <button
-                type="button"
-                onClick={() => onNutrientChange("sulfur", Math.min(150, nutrients.sulfur + 5))}
-                className="w-5.5 h-5.5 rounded bg-slate-950 hover:bg-slate-900 border border-slate-855 text-slate-400 hover:text-white flex items-center justify-center font-black text-xs cursor-pointer select-none active:scale-90 transition-all"
-              >
-                +
-              </button>
-            </div>
+            {expandedNutrientSec === "additives" && (
+              <>
+                {renderNutrientInput("phosphoricAcid",           "Phosphoric Acid (pH Down)",           0, 20, 0.1, "mL/100L", "accent-[#ef4444]")}
+                {renderNutrientInput("nitricAcid",               "Nitric Acid (pH Down Alt)",           0, 15, 0.1, "mL/100L", "accent-[#3b82f6]")}
+                {renderNutrientInput("potassiumHydroxide",       "Potassium Hydroxide (pH Up)",         0, 15, 0.1, "mL/100L", "accent-[#eab308]")}
+                {renderNutrientInput("bacillusAmyloliquefaciens","Bacillus amyloliquefaciens — Bio Prot",0, 50, 0.5, "mL/100L", "accent-[#10b981]")}
+                {renderNutrientInput("hypochlorousAcid",         "Hypochlorous Acid — Sterile",         0, 80, 1,   "mL/100L", "accent-[#6366f1]")}
+              </>
+            )}
           </div>
         </div>
       )}

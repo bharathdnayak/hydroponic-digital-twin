@@ -6,13 +6,30 @@ export interface NutrientSolution {
   calcium: number;
   magnesium: number;
   sulfur: number;
+
   // Micronutrients (ppm)
   iron: number;
   manganese: number;
-  boron: number;
   zinc: number;
+  boron: number;
   copper: number;
   molybdenum: number;
+  chlorine: number;
+
+  // Dry Salt Fertilizers (g/100L)
+  calciumNitrate: number;
+  potassiumNitrate: number;
+  monoammoniumPhosphate: number;
+  epsomSalts: number;
+  ironChelate: number;
+  traceMicronutrientBlend: number;
+
+  // Liquid Additives & Biologicals (mL/100L)
+  phosphoricAcid: number;
+  nitricAcid: number;
+  potassiumHydroxide: number;
+  bacillusAmyloliquefaciens: number;
+  hypochlorousAcid: number;
 }
 
 export interface ReservoirStats {

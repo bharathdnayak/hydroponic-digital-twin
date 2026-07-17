@@ -1,23 +1,51 @@
 import type { LettuceEnvironmentalStats, NutrientSolution, ReservoirStats } from "../types";
 
 /**
- * Rules calibrated from Song et al. (2020), the supplied lettuce paper.
- * The study used a 2:1 red:blue LED spectrum and compared 150-450 PPFD with
- * 1/4, 1/2 and 3/4 nutrient-solution strength.
+ * Lettuce (Lactuca sativa) hydroponic reference recipe.
+ *
+ * Elemental targets (ppm) are direct from the supplied specification.
+ * Dry-salt and liquid-additive dosages were supplied in per-100-gallons /
+ * per-gallon units and have been converted to per-100L (÷ 3.78541) so they
+ * match the unit labels shown in the UI.
+ *
+ * Dose-range midpoints are used where a range was given (e.g. 1–3 → 2,
+ * then ÷ 3.78541 → ~5.3 mL/100L for Phosphoric Acid).
  */
 export const LETTUCE_REFERENCE_RECIPE: NutrientSolution = {
-  nitrogen: 210,
-  phosphorus: 31,
-  potassium: 234,
-  calcium: 160,
-  magnesium: 48,
-  sulfur: 64,
-  iron: 5.6,
-  manganese: 0.5,
-  boron: 0.5,
-  zinc: 0.05,
-  copper: 0.02,
-  molybdenum: 0.01,
+  // ── Macronutrients (ppm) ──────────────────────────────────────────────────
+  nitrogen:   150,
+  calcium:     90,
+  potassium:  210,
+  phosphorus:  31,
+  magnesium:   24,
+  sulfur:      32,
+
+  // ── Micronutrients (ppm) ─────────────────────────────────────────────────
+  iron:        1.000,
+  manganese:   0.250,
+  zinc:        0.130,
+  boron:       0.160,
+  copper:      0.023,
+  molybdenum:  0.024,
+  chlorine:    4.900, // target "under 5.0 ppm"
+
+  // ── Dry Salt Fertilizers (g/100L) ─────────────────────────────────────────
+  // Source values in g/100 US gallons ÷ 3.78541 = g/100L
+  calciumNitrate:          22.7,   // 86.0  g / 100 gal
+  potassiumNitrate:        11.9,   // 45.0  g / 100 gal
+  monoammoniumPhosphate:    3.0,   // 11.5  g / 100 gal
+  epsomSalts:               6.5,   // 24.5  g / 100 gal
+  ironChelate:              1.0,   //  3.8  g / 100 gal
+  traceMicronutrientBlend:  0.5,   //  2.0  g / 100 gal
+
+  // ── Liquid Additives & Biologicals (mL/100L) ──────────────────────────────
+  // pH-adjustment acids: midpoint of range ÷ 37.8541 (mL/10 gal → mL/100L)
+  phosphoricAcid:    5.3,   // 1–3 mL / 10 gal  → mid 2 mL → 5.3 mL/100L
+  nitricAcid:        4.0,   // 1–2 mL / 10 gal  → mid 1.5 → 4.0 mL/100L
+  potassiumHydroxide: 4.0,  // 1–2 mL / 10 gal  → mid 1.5 → 4.0 mL/100L
+  // Biologicals: midpoint ÷ 3.78541 (mL/gallon → mL/100L ×26.42)
+  bacillusAmyloliquefaciens: 19.8, // 0.5–1.0 mL/gal → mid 0.75 mL/gal
+  hypochlorousAcid:          39.6, // 1.0–2.0 mL/gal → mid 1.5  mL/gal
 };
 
 const clamp = (value: number, min = 0, max = 1) => Math.min(max, Math.max(min, value));
