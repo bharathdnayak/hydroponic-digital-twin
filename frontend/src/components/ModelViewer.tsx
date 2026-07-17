@@ -504,8 +504,8 @@ export default function ModelViewer({ url = '/test.glb' }: ModelViewerProps) {
     <div 
       className={
         isFullscreen 
-          ? 'fixed inset-0 z-50 bg-[#989898] p-6 flex flex-col animate-in fade-in duration-200' 
-          : 'w-full h-full relative bg-[#989898] rounded-[24px] overflow-hidden border border-slate-300/80 shadow-sm'
+          ? 'fixed inset-0 z-50 bg-[#eaeaea] p-6 flex flex-col animate-in fade-in duration-200' 
+          : 'w-full h-full relative bg-[#eaeaea] rounded-[24px] overflow-hidden border border-slate-300/80 shadow-sm'
       }
     >
       {/* Title overlay in top-left corner */}
@@ -523,7 +523,7 @@ export default function ModelViewer({ url = '/test.glb' }: ModelViewerProps) {
           onClick={() => setIsFlowing(!isFlowing)}
           className={`flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl border border-slate-300 shadow-sm backdrop-blur-md transition-all duration-200 cursor-pointer font-bold text-xs ${
             isFlowing
-              ? 'bg-red-500 hover:bg-red-600 text-white'
+              ? 'bg-red-500 hover:bg-red-600 text-white border-transparent'
               : 'bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 border-slate-300'
           }`}
           title={isFlowing ? "Stop Water Pump" : "Start Water Pump"}
@@ -548,7 +548,7 @@ export default function ModelViewer({ url = '/test.glb' }: ModelViewerProps) {
           gl={{ antialias: true, preserveDrawingBuffer: true }}
           camera={{ position: [0, 2.5, 9], fov: 45 }}
         >
-          <color attach="background" args={['#989898']} />
+          <color attach="background" args={['#eaeaea']} />
           
           <Suspense fallback={<Loader />}>
             <ModelContent url={url} isFlowing={isFlowing} />

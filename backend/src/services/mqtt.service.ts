@@ -46,4 +46,4 @@ export function initMqttService(io: Server) {
       }
     });
 }
-// nodemon trigger comment
+// nodemon trigger comment 2
