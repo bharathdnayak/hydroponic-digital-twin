@@ -21,8 +21,16 @@ export default function PlantVisualizer({
   const { ledIntensity, flowRate, waterTemp, airTemp } = stats;
   const { stage, health, leafCount, rootLength } = metrics;
 
-  // 1. Dynamic Leaf Colors based on health
+  const isDead = health <= 5 || metrics.age > 88;
+  const swayAnimationSpeed = isDead ? 0.001 : scaledSpeed;
+
+  // 1. Dynamic Leaf Colors based on health and age
   const leafColor = useMemo(() => {
+    if (metrics.age > 70) {
+      if (metrics.age > 85) return "#3e2723"; // Dead, rotten dark brown
+      if (metrics.age > 78) return "#5c4033"; // Severely rotten brown
+      return "#bef264"; // Withered yellow-green
+    }
     if (health <= 5) return "#3e2723"; // Dead, rotten dark brown
     if (health <= 15) return "#5c4033"; // Severely rotten brown
     if (health <= 30) return "#785f43"; // Decaying brown/yellowish
@@ -31,20 +39,24 @@ export default function PlantVisualizer({
     if (stats.targetPH > 6.6) return "#eab308"; // High pH iron lockout
     if (stats.targetEC > 2.2) return "#15803d"; // Excess nitrogen dark
     return "#10b981"; // Healthy emerald
-  }, [health, stats.targetEC, stats.targetPH]);
+  }, [health, stats.targetEC, stats.targetPH, metrics.age]);
 
   // Leaf tip burn effect
   const tipBurnOpacity = useMemo(() => {
+    if (metrics.age > 70) return 0.95; // tips are burnt/decayed in old age
     if (health <= 10) return 0.95;
     if (health <= 30) return 0.6;
     if (stats.targetEC > 2.0) return 0.85;
     if (stats.targetEC > 1.8) return 0.4;
     return 0;
-  }, [stats.targetEC, health]);
+  }, [stats.targetEC, health, metrics.age]);
 
-  // Wilt angle based on air temperature & water stress
+  // Wilt angle based on air temperature, water stress, and age
   const wiltAngle = useMemo(() => {
     let angle = 0;
+    if (metrics.age > 70) {
+      angle += Math.min(45, (metrics.age - 70) * 2.2); // progressive droop
+    }
     if (health <= 5) angle += 40; // collapsed droop angle
     else if (health <= 15) angle += 30;
     else if (health <= 30) angle += 20;
@@ -52,16 +64,20 @@ export default function PlantVisualizer({
     if (airTemp > 29) angle += (airTemp - 29) * 1.8;
     if (!pumpRunning) angle += 15;
     return Math.min(angle, 55);
-  }, [airTemp, pumpRunning, health]);
+  }, [airTemp, pumpRunning, health, metrics.age]);
 
-  // Root color based on temperature and overall health
+  // Root color based on temperature, health, and age
   const rootColor = useMemo(() => {
+    if (metrics.age > 70) {
+      if (metrics.age > 82) return "#3e1c07"; // rotten black-brown
+      return "#78350f"; // decaying brown
+    }
     if (health <= 5) return "#3e1c07"; // completely decayed blackish-brown
     if (health <= 15) return "#5c2e0b"; // severely rotten brown
     if (waterTemp > 24.5) return "#78350f"; // rotten brown
     if (waterTemp > 23.0) return "#b45309"; // muddy amber
     return "#fef08a"; // healthy white-yellow
-  }, [waterTemp, health]);
+  }, [waterTemp, health, metrics.age]);
 
   // Compute Lettuce rosette leaves
   const leaves = useMemo(() => {
@@ -79,8 +95,12 @@ export default function PlantVisualizer({
       let sizeX = 0.4 + ageFactor * 0.7;
       let sizeY = 0.5 + ageFactor * 0.8;
 
-      // Shrivel effect if health is low
-      if (health <= 5) {
+      // Shrivel effect if health is low or age is high
+      if (metrics.age > 70) {
+        const decayFactor = Math.max(0.20, 1 - (metrics.age - 70) * 0.05);
+        sizeX *= decayFactor;
+        sizeY *= decayFactor;
+      } else if (health <= 5) {
         sizeX *= 0.55;
         sizeY *= 0.50; // Droop/collapse
       } else if (health <= 15) {
@@ -99,7 +119,7 @@ export default function PlantVisualizer({
       });
     }
     return list;
-  }, [leafCount, health]);
+  }, [leafCount, health, metrics.age]);
 
   const stretchYMultiplier = useMemo(() => {
     if (health <= 5) return 0.45; // severely collapsed/drooped
@@ -356,7 +376,7 @@ export default function PlantVisualizer({
           50% { transform: rotate(1.2deg) skewX(0.4deg); }
         }
         .sway-lettuce-group-${animationSpeed} {
-          animation: lettuce-sway ${5 / scaledSpeed}s ease-in-out infinite;
+          animation: lettuce-sway ${5 / swayAnimationSpeed}s ease-in-out infinite;
           transform-origin: 0px 0px;
         }
         .lettuce-leaf-item {
@@ -367,7 +387,7 @@ export default function PlantVisualizer({
           50% { transform: rotate(-1.5deg) scaleX(1.04) skewX(-0.5deg); }
         }
         .root-sway-group-${animationSpeed} {
-          animation: root-sway ${6.8 / scaledSpeed}s ease-in-out infinite;
+          animation: root-sway ${6.8 / swayAnimationSpeed}s ease-in-out infinite;
           transform-origin: 200px 240px;
         }
         @keyframes probe-pulse {

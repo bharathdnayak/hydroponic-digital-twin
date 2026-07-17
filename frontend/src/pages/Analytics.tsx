@@ -556,6 +556,11 @@ export default function Analytics() {
         // 1. Hourly Biology Update
         let nextHealth = tempMetrics.health;
         let healthDelta = 0.5;
+        const nextAge = tempMetrics.age + 0.04;
+
+        if (nextAge > 70) {
+          healthDelta -= (nextAge - 70) * 0.15;
+        }
 
         if (scenario === "Pump Failure") {
           healthDelta -= 3.5;
@@ -599,7 +604,8 @@ export default function Analytics() {
           healthDelta -= (environmentalStats.ledIntensity - 320) * 0.01;
         }
 
-        nextHealth = Math.max(5, Math.min(100, nextHealth + healthDelta));
+        const minHealth = nextAge > 70 ? 0 : 5;
+        nextHealth = Math.max(minHealth, Math.min(100, nextHealth + healthDelta));
 
         // Macronutrient penalties
         let activePenalty = 0;
@@ -609,7 +615,7 @@ export default function Analytics() {
         if (nutrients.magnesium < 30) activePenalty += 0.4;
         
         if (activePenalty > 0) {
-          nextHealth = Math.max(5, nextHealth - activePenalty);
+          nextHealth = Math.max(minHealth, nextHealth - activePenalty);
         }
 
         let growthMultiplier = nextHealth / 100;
@@ -620,7 +626,6 @@ export default function Analytics() {
         }
 
         const sizeInc = 0.05 * growthMultiplier;
-        const nextAge = tempMetrics.age + 0.04;
         const nextStage: "Germination" | "Seedling" | "Vegetative" | "Mature" = nextAge > 28 ? "Mature" : nextAge > 14 ? "Vegetative" : nextAge > 5 ? "Seedling" : "Germination";
         const { leafCount, rootLength } = getBiometricsForAge(nextAge);
 
