@@ -10,8 +10,6 @@ interface ControlsPanelProps {
   isRunning: boolean;
   onToggleRunning: () => void;
   onReset: () => void;
-  speed: number;
-  onSpeedChange: (speed: number) => void;
   realTime: boolean;
   onRealTimeToggle: () => void;
   autoCorrect: boolean;
@@ -37,7 +35,7 @@ interface ControlsPanelProps {
   onReservoirChange: (reservoir: ReservoirStats) => void;
   turbidity: number;
   onTurbidityChange: (turbidity: number) => void;
-  onFiveHourJump: () => void;
+  onTimeJump: (hours: number) => void;
 }
 
 export default function ControlsPanel({
@@ -48,8 +46,6 @@ export default function ControlsPanel({
   isRunning,
   onToggleRunning,
   onReset,
-  speed,
-  onSpeedChange,
   realTime,
   onRealTimeToggle,
   autoCorrect,
@@ -71,7 +67,7 @@ export default function ControlsPanel({
   onReservoirChange,
   turbidity,
   onTurbidityChange,
-  onFiveHourJump,
+  onTimeJump,
 }: ControlsPanelProps) {
   const [controlTab, setControlTab] = useState<"Scenarios" | "Tuning" | "Nutrients" | "Days">("Scenarios");
 
@@ -144,33 +140,31 @@ export default function ControlsPanel({
           </button>
         </div>
 
-        {/* Speed Dials */}
+        {/* Growth Time Jump Grid (Days Pattern) */}
         <div className="grid grid-cols-4 gap-1 bg-slate-950/60 p-1.5 rounded-lg border border-slate-900">
-          {[1, 2, 5, 10, 30, 50, 100].map((s) => (
+          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((s) => (
             <button
               key={s}
-              onClick={() => onSpeedChange(s)}
-              className={`py-1 rounded-md text-[11px] font-black transition-all cursor-pointer ${
-                speed === s && isRunning
-                  ? "bg-[#a3e635] text-slate-950 font-black"
-                  : "text-slate-400 hover:text-slate-200"
-              }`}
+              onClick={() => onTimeJump(s * 2)}
+              className="py-1 bg-slate-900 hover:bg-slate-950 border border-slate-800/80 rounded-md text-[10.5px] font-black transition-all cursor-pointer flex flex-col items-center justify-center active:scale-95 text-slate-400 hover:text-white"
               id={`speed-btn-${s}`}
+              title={`Instantly advance simulation by ${s * 2} hours`}
             >
-              {s}x
+              <span className="text-[#a3e635] font-black">{s}x</span>
+              <span className="text-[8px] text-slate-500 font-bold">+{s * 2}h</span>
             </button>
           ))}
         </div>
 
-        {/* Speed Growth - 5-Hour Jump Button */}
+        {/* Speed Growth - 24-Hour Jump Button */}
         <button
-          onClick={onFiveHourJump}
+          onClick={() => onTimeJump(24)}
           className="w-full py-2.5 px-3 bg-gradient-to-r from-[#a3e635] to-emerald-500 text-slate-950 font-black rounded-lg text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 hover:from-[#bbf246] hover:to-emerald-400 cursor-pointer shadow active:scale-[0.98] transition-all"
           id="btn-five-hour-jump"
-          title="Instantly advance crop growth by 5 hours"
+          title="Instantly advance crop growth by 24 hours"
         >
           <span className="text-[12px]">⚡</span>
-          <span>Fast Growth (5-Hr Jump)</span>
+          <span>Jump +24 Hours (1 Day)</span>
         </button>
       </div>
 
@@ -937,14 +931,14 @@ export default function ControlsPanel({
             </div>
           </div>
 
-          {/* Quick 5-Hour Jump */}
+          {/* Quick 24-Hour Jump */}
           <button
-            onClick={onFiveHourJump}
+            onClick={() => onTimeJump(24)}
             className="w-full py-2.5 px-3 bg-gradient-to-r from-[#a3e635] to-emerald-500 hover:from-[#bbf246] hover:to-emerald-400 text-slate-950 font-black rounded-lg text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 cursor-pointer transition-all shadow shrink-0"
             id="btn-days-five-hour-jump"
-            title="Advance crop life and solution updates by exactly 5 hours"
+            title="Advance crop life and solution updates by exactly 24 hours"
           >
-            <span>⚡ Jump +5 Hours Growth</span>
+            <span>⚡ Jump +24 Hours (1 Day)</span>
           </button>
 
           {/* Crop Age fine-tuning Slider */}

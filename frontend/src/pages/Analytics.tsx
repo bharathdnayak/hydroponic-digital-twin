@@ -1,9 +1,8 @@
 import { useState, useEffect, useMemo, useRef } from "react";
-import { Leaf, Activity } from "lucide-react";
+import { Leaf } from "lucide-react";
 import ControlsPanel from "../components/ControlsPanel";
 import PlantVisualizer from "../components/PlantVisualizer";
-import TelemetryPanel from "../components/TelemetryPanel";
-import type { LettuceEnvironmentalStats, ReservoirStats, LettuceMetrics, TelemetryPoint, NutrientSolution } from "../types";
+import type { LettuceEnvironmentalStats, ReservoirStats, LettuceMetrics, NutrientSolution } from "../types";
 import { assessLettuceConditions, LETTUCE_REFERENCE_RECIPE } from "../lib/lettuceModel";
 
 
@@ -22,7 +21,6 @@ export default function Analytics() {
   const [growthStage, setGrowthStage] = useState<"Germination" | "Seedling" | "Vegetative" | "Mature">("Vegetative");
   const [cropType, setCropType] = useState<string>("Lettuce");
   const [isRunning, setIsRunning] = useState<boolean>(true);
-  const [speed, setSpeed] = useState<number>(1);
   const [realTime, setRealTime] = useState<boolean>(true);
   const [autoCorrect, setAutoCorrect] = useState<boolean>(false);
   const [simMinutes, setSimMinutes] = useState<number>(0);
@@ -82,8 +80,7 @@ export default function Analytics() {
     nutrientConsumption: 35.0,
   });
 
-  // Telemetry history buffer
-  const [history, setHistory] = useState<TelemetryPoint[]>([]);
+
 
   // Simulation Timeline Log
   const [timeline, setTimeline] = useState<string[]>([
@@ -92,8 +89,7 @@ export default function Analytics() {
     "[00:00] Lactuca sativa physiology synchronized: current health 98%."
   ]);
 
-  // Active Workspace Tab
-  const [activeTab, setActiveTab] = useState<"twin" | "analytics">("twin");
+
 
   const timelineEndRef = useRef<HTMLDivElement>(null);
   const prevHourRef = useRef<number>(0);
@@ -516,8 +512,8 @@ export default function Analytics() {
     handleStageChange("Germination");
   };
 
-  // Instantaneous 5-Hour Fast Growth Time Warp Jump
-  const handleFiveHourJump = () => {
+  // Instantaneous Fast Growth Time Warp Jump
+  const handleTimeJump = (hours: number) => {
     const clockLabel = formattedClock;
     
     setSimMinutes((prevMinutes) => {
@@ -528,12 +524,9 @@ export default function Analytics() {
       let tempWaterUptake = waterUptake;
       let tempNutrientsFed = nutrientsFed;
       const newTimelineLogs: string[] = [];
-      const newTelemetryPoints: TelemetryPoint[] = [];
 
-      for (let step = 1; step <= 5; step++) {
+      for (let step = 1; step <= hours; step++) {
         currentMinutes += 60;
-        const currentHour = Math.floor(currentMinutes / 60);
-
 
         // 1. Hourly Biology Update
         let nextHealth = tempMetrics.health;
@@ -660,23 +653,6 @@ export default function Analytics() {
           predictedRefillDays: tempReservoir.predictedRefillDays,
           predictedNutrientRefillDays: tempReservoir.predictedNutrientRefillDays,
         };
-
-        // Generate dynamic Telemetry Point
-        newTelemetryPoints.push({
-          time: currentHour,
-          pH: tempReservoir.pH,
-          ec: tempReservoir.ec,
-          waterTemp: environmentalStats.waterTemp,
-          airTemp: environmentalStats.airTemp,
-          humidity: environmentalStats.humidity,
-          ledIntensity: environmentalStats.ledIntensity,
-          plantHeight: tempMetrics.height,
-          leafAreaIndex: tempMetrics.leafAreaIndex,
-          freshBiomass: tempMetrics.freshBiomass,
-          growthRate: tempMetrics.growthRate,
-          waterConsumption: cropWaterAbsorption,
-          nutrientConsumption: tempMetrics.nutrientConsumption,
-        });
       }
 
       // Commit local accumulated state to react state
@@ -687,26 +663,16 @@ export default function Analytics() {
       setNutrientsFed(tempNutrientsFed);
       prevHourRef.current = Math.floor(currentMinutes / 60);
 
-      // Append Telemetry History
-      setHistory((prevHist) => {
-        const combined = [...prevHist, ...newTelemetryPoints];
-        if (combined.length > 15) {
-          return combined.slice(combined.length - 15);
-        }
-        return combined;
-      });
-
       // Append Timelines
       setTimeline((prevLogs) => {
         const uniqueDosingLogs = Array.from(new Set(newTimelineLogs));
         const formattedDosingLogs = uniqueDosingLogs.map(log => `  ↳ ${log}`);
         return [
           ...prevLogs,
-          `[${clockLabel}] ⚡ FAST GROWTH WARP: Advanced simulation by exactly 5 Hours (+300 mins). Crop age is now ${tempMetrics.age.toFixed(2)} days.`,
+          `[${clockLabel}] ⚡ TIME WARP: Advanced simulation by exactly ${hours} Hours (+${hours * 60} mins). Crop age is now ${tempMetrics.age.toFixed(2)} days.`,
           ...formattedDosingLogs
         ];
       });
-
       return currentMinutes;
     });
   };
@@ -717,7 +683,7 @@ export default function Analytics() {
 
     const interval = setInterval(() => {
       setSimMinutes((prev) => {
-        const nextMin = prev + speed;
+        const nextMin = prev + 1;
         const currentHour = Math.floor(nextMin / 60);
 
         // Simulated hour trigger
@@ -866,28 +832,7 @@ export default function Analytics() {
             };
           });
 
-          // Accumulate History Buffer
-          setHistory((prevHist) => {
-            const point: TelemetryPoint = {
-              time: currentHour,
-              pH: reservoir.pH,
-              ec: reservoir.ec,
-              waterTemp: environmentalStats.waterTemp,
-              airTemp: environmentalStats.airTemp,
-              humidity: environmentalStats.humidity,
-              ledIntensity: environmentalStats.ledIntensity,
-              plantHeight: metrics.height,
-              leafAreaIndex: metrics.leafAreaIndex,
-              freshBiomass: metrics.freshBiomass,
-              growthRate: metrics.growthRate,
-              waterConsumption: scenario === "Tipburn Risk" ? 0.35 : 0.15,
-              nutrientConsumption: metrics.nutrientConsumption,
-            };
 
-            const next = [...prevHist, point];
-            if (next.length > 15) return next.slice(1);
-            return next;
-          });
 
           // Intermittent timeline status logs
           if (currentHour % 3 === 0) {
@@ -913,7 +858,7 @@ export default function Analytics() {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [isRunning, speed, scenario, reservoir, metrics, environmentalStats, autoCorrect, nutrients, activeDeficiencies, turbidity]);
+  }, [isRunning, scenario, reservoir, metrics, environmentalStats, autoCorrect, nutrients, activeDeficiencies, turbidity]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%', overflow: 'hidden' }} className="text-slate-100 font-mono text-sm antialiased selection:bg-[#a3e635] selection:text-slate-950 bg-[#090a0f]">
@@ -961,8 +906,6 @@ export default function Analytics() {
               isRunning={isRunning}
               onToggleRunning={() => setIsRunning(!isRunning)}
               onReset={handleReset}
-              speed={speed}
-              onSpeedChange={setSpeed}
               realTime={realTime}
               onRealTimeToggle={() => setRealTime(!realTime)}
               autoCorrect={autoCorrect}
@@ -984,41 +927,17 @@ export default function Analytics() {
               onReservoirChange={setReservoir}
               turbidity={turbidity}
               onTurbidityChange={setTurbidity}
-              onFiveHourJump={handleFiveHourJump}
+              onTimeJump={handleTimeJump}
             />
           </div>
         </section>
 
         {/* COLUMN 2 & 3 Combined: HIGH-DENSITY WORKSPACE WITH TAB TOGGLES */}
         <section className="xl:col-span-9 flex flex-col space-y-3 min-h-0 h-full" id="workspace-container">
-          
-          {/* Workspace Tabs Toggle */}
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-900 pb-3 shrink-0" id="workspace-tabs-bar">
-            <div className="flex items-center space-x-3.5 bg-slate-950/80 p-2 rounded-2xl border border-slate-900 shadow-lg flex-wrap">
-              <button
-                onClick={() => setActiveTab("twin")}
-                className={`px-5.5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-3 transition-all cursor-pointer ${
-                  activeTab === "twin"
-                    ? "bg-[#a3e635] text-slate-950 shadow-md font-black"
-                    : "text-slate-400 hover:text-slate-200"
-                }`}
-                id="btn-tab-twin"
-              >
-                <Leaf className="w-4.5 h-4.5" />
-                <span>Digital Twin</span>
-              </button>
-              <button
-                onClick={() => setActiveTab("analytics")}
-                className={`px-5.5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-3 transition-all cursor-pointer ${
-                  activeTab === "analytics"
-                    ? "bg-[#a3e635] text-slate-950 shadow-md font-black"
-                    : "text-slate-400 hover:text-slate-200"
-                }`}
-                id="btn-tab-analytics"
-              >
-                <Activity className="w-4.5 h-4.5" />
-                <span>Analytics & Plots</span>
-              </button>
+           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-900 pb-3 shrink-0" id="workspace-tabs-bar">
+            <div className="flex items-center gap-2 px-1">
+              <Leaf className="w-5 h-5 text-[#a3e635] animate-pulse" />
+              <span className="text-xs font-black uppercase tracking-wider text-slate-100">Digital Twin Engine</span>
             </div>
 
             {/* High density specs readout right aligned */}
@@ -1042,9 +961,7 @@ export default function Analytics() {
             </div>
           </div>
 
-          {/* TAB CONTENT: 1. DIGITAL TWIN */}
-          {activeTab === "twin" && (
-            <div style={{ height: 'calc(100% - 50px)' }} className="grid grid-cols-1 lg:grid-cols-12 gap-3 min-h-0 flex-1 overflow-hidden animate-fade-in" id="tab-twin-content">
+          <div style={{ height: 'calc(100% - 50px)' }} className="grid grid-cols-1 lg:grid-cols-12 gap-3 min-h-0 flex-1 overflow-hidden animate-fade-in" id="tab-twin-content">
               
               {/* Center Column: Crop Species, Visualizer & Charts */}
               <div className="lg:col-span-8 flex flex-col space-y-3.5 min-h-0 h-full">
@@ -1508,21 +1425,6 @@ export default function Analytics() {
               </div>
 
             </div>
-          )}
-
-          {/* TAB CONTENT: 2. ANALYTICS & PLOTS */}
-          {activeTab === "analytics" && (
-            <div className="flex-1 min-h-0 overflow-y-auto animate-fade-in" id="tab-analytics-content">
-              <TelemetryPanel
-                history={history}
-                currentPH={reservoir.pH}
-                currentTDS={reservoir.tds}
-                currentTurbidity={currentTurbidity}
-                currentWaterTemp={environmentalStats.waterTemp}
-                currentHealth={metrics.health}
-              />
-            </div>
-          )}
 
         </section>
       </main>
