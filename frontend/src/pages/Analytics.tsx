@@ -42,13 +42,13 @@ const getBiometricsForAge = (age: number) => {
 export default function Analytics() {
   // Simulation States
   const [scenario, setScenario] = useState<string>("Normal Growth");
-  const [growthStage, setGrowthStage] = useState<"Germination" | "Seedling" | "Vegetative" | "Mature">("Vegetative");
+  const [growthStage, setGrowthStage] = useState<"Germination" | "Seedling" | "Vegetative" | "Mature">("Germination");
   const [cropType, setCropType] = useState<string>("Lettuce");
   const [isRunning, setIsRunning] = useState<boolean>(true);
   const [realTime, setRealTime] = useState<boolean>(true);
   const [warpFactor, setWarpFactor] = useState<number>(1);
   const [autoCorrect, setAutoCorrect] = useState<boolean>(false);
-  const [simMinutes, setSimMinutes] = useState<number>(14 * 1440);
+  const [simMinutes, setSimMinutes] = useState<number>(0);
   const [turbidity, setTurbidity] = useState<number>(4.2);
 
   // Accumulators
@@ -89,35 +89,35 @@ export default function Analytics() {
 
   // Biological Metrics States
   const [metrics, setMetrics] = useState<LettuceMetrics>({
-    age: 14,
-    stage: "Vegetative",
-    height: 12.5,
-    leafCount: 16,
-    leafAreaIndex: 1.25,
-    rootLength: 10.5,
-    freshBiomass: 18.0,
-    dryBiomass: 0.9,
-    estimatedHarvestWeight: 180.0,
-    health: 98,
-    growthRate: 1.80,
-    photosynthesisRate: 8.5,
-    waterConsumption: 0.12,
-    nutrientConsumption: 35.0,
+    age: 0,
+    stage: "Germination",
+    height: 0.5,
+    leafCount: 2,
+    leafAreaIndex: 0.02,
+    rootLength: 1.2,
+    freshBiomass: 0.1,
+    dryBiomass: 0.01,
+    estimatedHarvestWeight: 0.1,
+    health: 100,
+    growthRate: 2.1,
+    photosynthesisRate: 0.1,
+    waterConsumption: 0.01,
+    nutrientConsumption: 5.0,
   });
 
 
 
   // Simulation Timeline Log
   const [timeline, setTimeline] = useState<string[]>([
-    "[00:00] Simulation initialized for Lettuce (Vegetative stage).",
-    "[00:00] System checks: NFT pump active, LED arrays online at 225 PPFD.",
-    "[00:00] Lactuca sativa physiology synchronized: current health 98%."
+    "[00:00] Simulation initialized for Lettuce (Germination stage).",
+    "[00:00] System checks: NFT pump active, LED arrays online.",
+    "[00:00] Lactuca sativa physiology synchronized: current health 100%."
   ]);
 
 
 
   const timelineEndRef = useRef<HTMLDivElement>(null);
-  const prevHourRef = useRef<number>(14 * 24);
+  const prevHourRef = useRef<number>(0);
   const lastRoutineLogRef = useRef<string>("");
 
   // Auto-scroll timeline logs
@@ -482,10 +482,10 @@ export default function Analytics() {
 
   // Reset Simulation
   const handleReset = () => {
-    setSimMinutes(14 * 1440);
+    setSimMinutes(0);
     setWaterUptake(1.0);
     setNutrientsFed(0.0);
-    prevHourRef.current = 14 * 24;
+    prevHourRef.current = 0;
     lastRoutineLogRef.current = "";
     
     // Reset reservoir stats
@@ -501,28 +501,28 @@ export default function Analytics() {
       predictedNutrientRefillDays: 30,
     });
 
-    // Reset plant metrics to healthy vegetative
+    // Reset plant metrics to Germination Day 0
     setMetrics({
-      age: 14,
-      stage: "Vegetative",
-      height: 12.5,
-      leafCount: 16,
-      leafAreaIndex: 1.25,
-      rootLength: 10.5,
-      freshBiomass: 18.0,
-      dryBiomass: 0.9,
-      estimatedHarvestWeight: 180.0,
-      health: 98,
-      growthRate: 1.80,
-      photosynthesisRate: 8.5,
-      waterConsumption: 0.12,
-      nutrientConsumption: 35.0,
+      age: 0,
+      stage: "Germination",
+      height: 0.5,
+      leafCount: 2,
+      leafAreaIndex: 0.02,
+      rootLength: 1.2,
+      freshBiomass: 0.1,
+      dryBiomass: 0.01,
+      estimatedHarvestWeight: 0.1,
+      health: 100,
+      growthRate: 2.1,
+      photosynthesisRate: 0.1,
+      waterConsumption: 0.01,
+      nutrientConsumption: 5.0,
     });
 
     // Reset macronutrient solution recipe
     setNutrients({ ...LETTUCE_REFERENCE_RECIPE });
 
-    setGrowthStage("Vegetative");
+    setGrowthStage("Germination");
     setScenario("Normal Growth");
 
     setTimeline([
