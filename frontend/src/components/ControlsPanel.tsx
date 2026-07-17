@@ -36,6 +36,8 @@ interface ControlsPanelProps {
   turbidity: number;
   onTurbidityChange: (turbidity: number) => void;
   onTimeJump: (hours: number) => void;
+  warpFactor: number;
+  onWarpFactorChange: (factor: number) => void;
 }
 
 export default function ControlsPanel({
@@ -68,6 +70,8 @@ export default function ControlsPanel({
   turbidity,
   onTurbidityChange,
   onTimeJump,
+  warpFactor,
+  onWarpFactorChange,
 }: ControlsPanelProps) {
   const [controlTab, setControlTab] = useState<"Scenarios" | "Tuning" | "Nutrients" | "Days">("Scenarios");
 
@@ -145,20 +149,30 @@ export default function ControlsPanel({
           {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((s) => (
             <button
               key={s}
-              onClick={() => onTimeJump(s * 2)}
-              className="py-1 bg-slate-900 hover:bg-slate-950 border border-slate-800/80 rounded-md text-[10.5px] font-black transition-all cursor-pointer flex flex-col items-center justify-center active:scale-95 text-slate-400 hover:text-white"
+              onClick={() => {
+                onTimeJump(s * 2);
+                onWarpFactorChange(s);
+              }}
+              className={`py-1 border rounded-md text-[10.5px] font-black transition-all cursor-pointer flex flex-col items-center justify-center active:scale-95 ${
+                warpFactor === s
+                  ? "bg-[#a3e635] text-slate-950 border-[#a3e635] font-black shadow-[0_0_8px_rgba(163,230,53,0.35)]"
+                  : "bg-slate-900 hover:bg-slate-950 border-slate-800/80 text-slate-400 hover:text-white"
+              }`}
               id={`speed-btn-${s}`}
               title={`Instantly advance simulation by ${s * 2} hours`}
             >
-              <span className="text-[#a3e635] font-black">{s}x</span>
-              <span className="text-[8px] text-slate-500 font-bold">+{s * 2}h</span>
+              <span className={`font-black ${warpFactor === s ? "text-slate-950" : "text-[#a3e635]"}`}>{s}x</span>
+              <span className={`text-[8.5px] font-bold ${warpFactor === s ? "text-emerald-950" : "text-slate-500"}`}>+{s * 2}h</span>
             </button>
           ))}
         </div>
 
         {/* Speed Growth - 24-Hour Jump Button */}
         <button
-          onClick={() => onTimeJump(24)}
+          onClick={() => {
+            onTimeJump(24);
+            onWarpFactorChange(12);
+          }}
           className="w-full py-2.5 px-3 bg-gradient-to-r from-[#a3e635] to-emerald-500 text-slate-950 font-black rounded-lg text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 hover:from-[#bbf246] hover:to-emerald-400 cursor-pointer shadow active:scale-[0.98] transition-all"
           id="btn-five-hour-jump"
           title="Instantly advance crop growth by 24 hours"
@@ -933,7 +947,10 @@ export default function ControlsPanel({
 
           {/* Quick 24-Hour Jump */}
           <button
-            onClick={() => onTimeJump(24)}
+            onClick={() => {
+              onTimeJump(24);
+              onWarpFactorChange(12);
+            }}
             className="w-full py-2.5 px-3 bg-gradient-to-r from-[#a3e635] to-emerald-500 hover:from-[#bbf246] hover:to-emerald-400 text-slate-950 font-black rounded-lg text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 cursor-pointer transition-all shadow shrink-0"
             id="btn-days-five-hour-jump"
             title="Advance crop life and solution updates by exactly 24 hours"

@@ -7,6 +7,7 @@ interface PlantVisualizerProps {
   reservoirLevel?: number; // unused in svg but required in page integration
   pumpRunning: boolean;
   onHarvest?: () => void;
+  animationSpeed?: number;
 }
 
 export default function PlantVisualizer({
@@ -14,6 +15,7 @@ export default function PlantVisualizer({
   metrics,
   pumpRunning,
   onHarvest,
+  animationSpeed = 1,
 }: PlantVisualizerProps) {
   const { ledIntensity, flowRate, waterTemp, airTemp } = stats;
   const { stage, health, leafCount, rootLength } = metrics;
@@ -209,7 +211,7 @@ export default function PlantVisualizer({
                 strokeWidth="1.5"
                 strokeDasharray="12 40"
                 strokeLinecap="round"
-                className="animate-[flow_1.5s_linear_infinite]"
+                className="water-flow-item"
                 opacity="0.6"
               />
             </g>
@@ -262,11 +264,11 @@ export default function PlantVisualizer({
         <g id="submersed-nft-probes" className="font-mono text-[8px] font-bold">
           <g transform="translate(50, 220)">
             <rect x="0" y="0" width="8" height="35" fill="#0f172a" stroke="#334155" strokeWidth="0.8" />
-            <circle cx="4" cy="35" r="2.5" fill="#22d3ee" className="animate-pulse" />
+            <circle cx="4" cy="35" r="2.5" fill="#22d3ee" className="probe-pulse-item" />
           </g>
           <g transform="translate(110, 225)">
             <rect x="0" y="0" width="6" height="30" fill="#0f172a" stroke="#334155" strokeWidth="0.8" />
-            <circle cx="3" cy="30" r="2" fill="#34d399" className="animate-pulse" />
+            <circle cx="3" cy="30" r="2" fill="#34d399" className="probe-pulse-item" />
           </g>
         </g>
 
@@ -346,12 +348,15 @@ export default function PlantVisualizer({
         @keyframes flow {
           to { stroke-dashoffset: -200; }
         }
+        .water-flow-item {
+          animation: flow ${1.5 / animationSpeed}s linear infinite;
+        }
         @keyframes lettuce-sway {
           0%, 100% { transform: rotate(0deg); }
           50% { transform: rotate(1.2deg) skewX(0.4deg); }
         }
         .sway-lettuce-group {
-          animation: lettuce-sway 5s ease-in-out infinite;
+          animation: lettuce-sway ${5 / animationSpeed}s ease-in-out infinite;
           transform-origin: 0px 0px;
         }
         .lettuce-leaf-item {
@@ -362,8 +367,15 @@ export default function PlantVisualizer({
           50% { transform: rotate(-1.5deg) scaleX(1.04) skewX(-0.5deg); }
         }
         .root-sway-group {
-          animation: root-sway 6.8s ease-in-out infinite;
+          animation: root-sway ${6.8 / animationSpeed}s ease-in-out infinite;
           transform-origin: 200px 240px;
+        }
+        @keyframes probe-pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.4; }
+        }
+        .probe-pulse-item {
+          animation: probe-pulse ${2 / animationSpeed}s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
       `}</style>
     </div>

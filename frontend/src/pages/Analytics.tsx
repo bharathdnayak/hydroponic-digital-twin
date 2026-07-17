@@ -22,6 +22,7 @@ export default function Analytics() {
   const [cropType, setCropType] = useState<string>("Lettuce");
   const [isRunning, setIsRunning] = useState<boolean>(true);
   const [realTime, setRealTime] = useState<boolean>(true);
+  const [warpFactor, setWarpFactor] = useState<number>(1);
   const [autoCorrect, setAutoCorrect] = useState<boolean>(false);
   const [simMinutes, setSimMinutes] = useState<number>(0);
   const [turbidity, setTurbidity] = useState<number>(4.2);
@@ -928,6 +929,8 @@ export default function Analytics() {
               turbidity={turbidity}
               onTurbidityChange={setTurbidity}
               onTimeJump={handleTimeJump}
+              warpFactor={warpFactor}
+              onWarpFactorChange={setWarpFactor}
             />
           </div>
         </section>
@@ -999,6 +1002,7 @@ export default function Analytics() {
                         reservoirLevel={(reservoir.volume / reservoir.maxVolume) * 100}
                         pumpRunning={environmentalStats.flowRate > 0}
                         onHarvest={handleHarvest}
+                        animationSpeed={warpFactor}
                       />
                     </div>
                   </div>
