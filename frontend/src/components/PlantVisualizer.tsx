@@ -211,7 +211,7 @@ export default function PlantVisualizer({
                 strokeWidth="1.5"
                 strokeDasharray="12 40"
                 strokeLinecap="round"
-                className="water-flow-item"
+                className={`water-flow-item-${animationSpeed}`}
                 opacity="0.6"
               />
             </g>
@@ -237,8 +237,7 @@ export default function PlantVisualizer({
           <ellipse cx="200" cy="240" rx="35" ry="6" fill="#1e293b" stroke="#475569" strokeWidth="1.2" />
         </g>
 
-        {/* 3. SUBMERGED FIBROUS ROOT SYSTEM */}
-        <g id="fibrous-lettuce-roots" className="root-sway-group">
+        <g id="fibrous-lettuce-roots" className={`root-sway-group-${animationSpeed}`}>
           <g stroke={rootColor} strokeLinecap="round" strokeWidth="2" fill="none" className="transition-all duration-1000">
             {rootPaths.map((path, idx) => (
               <path key={`root-hair-${idx}`} d={path} opacity={0.6 + Math.min(health / 250, 0.4)} />
@@ -264,11 +263,11 @@ export default function PlantVisualizer({
         <g id="submersed-nft-probes" className="font-mono text-[8px] font-bold">
           <g transform="translate(50, 220)">
             <rect x="0" y="0" width="8" height="35" fill="#0f172a" stroke="#334155" strokeWidth="0.8" />
-            <circle cx="4" cy="35" r="2.5" fill="#22d3ee" className="probe-pulse-item" />
+            <circle cx="4" cy="35" r="2.5" fill="#22d3ee" className={`probe-pulse-item-${animationSpeed}`} />
           </g>
           <g transform="translate(110, 225)">
             <rect x="0" y="0" width="6" height="30" fill="#0f172a" stroke="#334155" strokeWidth="0.8" />
-            <circle cx="3" cy="30" r="2" fill="#34d399" className="probe-pulse-item" />
+            <circle cx="3" cy="30" r="2" fill="#34d399" className={`probe-pulse-item-${animationSpeed}`} />
           </g>
         </g>
 
@@ -290,7 +289,7 @@ export default function PlantVisualizer({
               <ellipse cx="7" cy="-17" rx="6" ry="4" fill="#10b981" transform="rotate(20 7 -17)" />
             </g>
           ) : (
-            <g transform={`rotate(${wiltAngle})`} className="sway-lettuce-group">
+            <g transform={`rotate(${wiltAngle})`} className={`sway-lettuce-group-${animationSpeed}`}>
               {leaves.map((leaf) => {
                 const tiltAngle = leaf.angle;
                 const pathData = "M 0 0 C -22 -18 -32 -48 -18 -68 C -8 -78 8 -78 18 -68 C 32 -48 22 -18 0 0";
@@ -348,14 +347,14 @@ export default function PlantVisualizer({
         @keyframes flow {
           to { stroke-dashoffset: -200; }
         }
-        .water-flow-item {
+        .water-flow-item-${animationSpeed} {
           animation: flow ${1.5 / animationSpeed}s linear infinite;
         }
         @keyframes lettuce-sway {
           0%, 100% { transform: rotate(0deg); }
           50% { transform: rotate(1.2deg) skewX(0.4deg); }
         }
-        .sway-lettuce-group {
+        .sway-lettuce-group-${animationSpeed} {
           animation: lettuce-sway ${5 / animationSpeed}s ease-in-out infinite;
           transform-origin: 0px 0px;
         }
@@ -366,7 +365,7 @@ export default function PlantVisualizer({
           0%, 100% { transform: rotate(0deg) scaleX(1); }
           50% { transform: rotate(-1.5deg) scaleX(1.04) skewX(-0.5deg); }
         }
-        .root-sway-group {
+        .root-sway-group-${animationSpeed} {
           animation: root-sway ${6.8 / animationSpeed}s ease-in-out infinite;
           transform-origin: 200px 240px;
         }
@@ -374,7 +373,7 @@ export default function PlantVisualizer({
           0%, 100% { opacity: 1; }
           50% { opacity: 0.4; }
         }
-        .probe-pulse-item {
+        .probe-pulse-item-${animationSpeed} {
           animation: probe-pulse ${2 / animationSpeed}s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
       `}</style>

@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { Leaf } from "lucide-react";
 import ControlsPanel from "../components/ControlsPanel";
 import PlantVisualizer from "../components/PlantVisualizer";
@@ -13,6 +13,30 @@ const getTimelineProgressPercent = (age: number): number => {
   if (age <= 28) return 50 + ((age - 14) / (28 - 14)) * 25;
   if (age <= 35) return 75 + ((age - 28) / (35 - 28)) * 25;
   return 100;
+};
+
+const getBiometricsForAge = (age: number) => {
+  let leafCount = 2;
+  let rootLength = 1.2;
+  
+  if (age <= 5) {
+    const ratio = age / 5;
+    leafCount = Math.round(2 + ratio * (6 - 2));
+    rootLength = 1.2 + ratio * (4.1 - 1.2);
+  } else if (age <= 14) {
+    const ratio = (age - 5) / 9;
+    leafCount = Math.round(6 + ratio * (16 - 6));
+    rootLength = 4.1 + ratio * (10.5 - 4.1);
+  } else if (age <= 28) {
+    const ratio = (age - 14) / 14;
+    leafCount = Math.round(16 + ratio * (28 - 16));
+    rootLength = 10.5 + ratio * (18.0 - 10.5);
+  } else {
+    const ratio = Math.min(1.0, (age - 28) / 7);
+    leafCount = Math.round(28 + ratio * (34 - 28));
+    rootLength = 18.0 + ratio * (21.0 - 18.0);
+  }
+  return { leafCount, rootLength };
 };
 
 export default function Analytics() {
@@ -514,7 +538,7 @@ export default function Analytics() {
   };
 
   // Instantaneous Fast Growth Time Warp Jump
-  const handleTimeJump = (hours: number) => {
+  const handleTimeJump = useCallback((hours: number) => {
     const clockLabel = formattedClock;
     
     setSimMinutes((prevMinutes) => {
@@ -598,6 +622,7 @@ export default function Analytics() {
         const sizeInc = 0.05 * growthMultiplier;
         const nextAge = tempMetrics.age + 0.04;
         const nextStage: "Germination" | "Seedling" | "Vegetative" | "Mature" = nextAge > 28 ? "Mature" : nextAge > 14 ? "Vegetative" : nextAge > 5 ? "Seedling" : "Germination";
+        const { leafCount, rootLength } = getBiometricsForAge(nextAge);
 
         tempMetrics = {
           ...tempMetrics,
@@ -606,6 +631,8 @@ export default function Analytics() {
           freshBiomass: parseFloat((tempMetrics.freshBiomass + sizeInc * 8.5).toFixed(1)),
           age: parseFloat(nextAge.toFixed(2)),
           stage: nextStage,
+          leafCount,
+          rootLength: parseFloat(rootLength.toFixed(1)),
         };
 
         // 2. Hourly Turbidity Update
@@ -676,190 +703,18 @@ export default function Analytics() {
       });
       return currentMinutes;
     });
-  };
+  }, [metrics, reservoir, turbidity, waterUptake, nutrientsFed, environmentalStats, scenario, autoCorrect, nutrients, lettuceAssessment]);
 
   // Simulation Clock Ticking interval loop
   useEffect(() => {
     if (!isRunning) return;
 
     const interval = setInterval(() => {
-      setSimMinutes((prev) => {
-        const nextMin = prev + 1;
-        const currentHour = Math.floor(nextMin / 60);
-
-        // Simulated hour trigger
-        if (currentHour > prevHourRef.current) {
-          prevHourRef.current = currentHour;
-          const clockLabel = `${(currentHour % 24).toString().padStart(2, "0")}:00`;
-
-          // Hourly Biology Update
-          setMetrics((prevMetrics) => {
-            let nextHealth = prevMetrics.health;
-            
-            // Base delta is slow recovery if healthy, but stressors decrease it
-            let healthDelta = 0.5;
-
-            if (scenario === "Pump Failure") {
-              healthDelta -= 3.5;
-            }
-
-            // Direct Air Temperature stress
-            if (environmentalStats.airTemp > 30) {
-              healthDelta -= (environmentalStats.airTemp - 30) * 0.25;
-            } else if (environmentalStats.airTemp < 15) {
-              healthDelta -= (15 - environmentalStats.airTemp) * 0.15;
-            }
-
-            // Direct Water Temperature stress
-            if (environmentalStats.waterTemp > 24) {
-              healthDelta -= (environmentalStats.waterTemp - 24) * 0.35;
-            } else if (environmentalStats.waterTemp < 15) {
-              healthDelta -= (15 - environmentalStats.waterTemp) * 0.15;
-            }
-
-            // Direct pH stress
-            if (reservoir.pH < 4.5 || reservoir.pH > 8.0) {
-              healthDelta -= 2.0;
-            } else if (reservoir.pH < 5.5 || reservoir.pH > 6.5) {
-              healthDelta -= 0.3;
-            }
-
-            // Direct EC/TDS stress
-            if (reservoir.ec < 0.6) {
-              healthDelta -= (0.6 - reservoir.ec) * 1.5;
-            } else if (reservoir.ec > 2.4) {
-              healthDelta -= (reservoir.ec - 2.4) * 1.0;
-            }
-
-            // Direct Turbidity stress
-            if (turbidity > 7.0) {
-              healthDelta -= (turbidity - 7.0) * 0.25;
-            }
-
-            // Direct Light intensity stress (photo-inhibition)
-            if (environmentalStats.ledIntensity > 320) {
-              healthDelta -= (environmentalStats.ledIntensity - 320) * 0.01;
-            }
-
-            nextHealth = Math.max(5, Math.min(100, nextHealth + healthDelta));
-
-            // Apply specific macronutrient penalties
-            let activePenalty = 0;
-            if (nutrients.nitrogen < 80) activePenalty += 0.8;
-            if (nutrients.calcium < 70) activePenalty += 1.5; // severe Tipburn triggers
-            if (nutrients.potassium < 100) activePenalty += 0.4;
-            if (nutrients.magnesium < 30) activePenalty += 0.4;
-            
-            if (activePenalty > 0) {
-              nextHealth = Math.max(5, nextHealth - activePenalty);
-            }
-
-            // Height and freshBiomass increments based on health, light, and air temp
-            let growthMultiplier = nextHealth / 100;
-            
-            // Light and nutrient solution interact; calibrated to the supplied study.
-            growthMultiplier *= lettuceAssessment.growthFactor * 1.2;
-
-            // Heat penalty
-            if (environmentalStats.airTemp > 28) {
-              growthMultiplier *= Math.max(0.2, 1 - (environmentalStats.airTemp - 28) * 0.05);
-            }
-
-            const sizeInc = 0.05 * growthMultiplier;
-            
-            return {
-              ...prevMetrics,
-              health: parseFloat(nextHealth.toFixed(1)),
-              height: parseFloat((prevMetrics.height + sizeInc * 1.5).toFixed(1)),
-              freshBiomass: parseFloat((prevMetrics.freshBiomass + sizeInc * 8.5).toFixed(1)),
-              age: parseFloat((prevMetrics.age + 0.04).toFixed(2)),
-              stage: prevMetrics.age > 28 ? "Mature" : prevMetrics.age > 5 ? "Vegetative" : "Seedling",
-            };
-          });
-
-          // Hourly Turbidity Update (Increments naturally if Algae Bloom and not manually lowered)
-          if (scenario === "Algae Bloom") {
-            setTurbidity((t) => Math.min(15.0, t + 0.4));
-          }
-
-          // Hourly Reservoir Update (Absorption and drifting)
-          setReservoir((prevRes) => {
-            const cropWaterAbsorption = scenario === "Tipburn Risk" ? 0.35 : 0.15;
-            let nextVol = Math.max(10.0, prevRes.volume - cropWaterAbsorption);
-            setWaterUptake((u) => u + cropWaterAbsorption);
-
-            // Solution drifts up in pH naturally
-            let nextPH = prevRes.pH + 0.03;
-            let nextEC = prevRes.ec;
-
-            if (scenario === "Algae Bloom") {
-              nextEC = Math.max(0.5, nextEC - 0.02); // rapid depletion
-            }
-
-            // Auto dosing loops
-            if (autoCorrect) {
-              if (nextPH > 6.2) {
-                nextPH = 6.0;
-                setTimeline((timeline) => [
-                  ...timeline,
-                  `[${clockLabel}] Auto dosing: Injected pH Down. Corrected pH from ${prevRes.pH.toFixed(2)} to 6.0.`
-                ]);
-              }
-              if (nextEC < environmentalStats.targetEC) {
-                nextEC = environmentalStats.targetEC;
-                setNutrientsFed((f) => f + 0.8);
-                setTimeline((timeline) => [
-                  ...timeline,
-                  `[${clockLabel}] Auto dosing: Nutrient pump active. Realigned EC to target ${environmentalStats.targetEC} mS/cm.`
-                ]);
-              }
-              if (nextVol < 80.0) {
-                nextVol = 95.0;
-                setTimeline((timeline) => [
-                  ...timeline,
-                  `[${clockLabel}] Auto-Refill Valve: Reservoir fell below 80L. Automatically topped off water to 95.0 L.`
-                ]);
-              }
-            } else {
-              nextPH = Math.max(3.8, Math.min(9.5, nextPH));
-            }
-
-            return {
-              ...prevRes,
-              volume: parseFloat(nextVol.toFixed(1)),
-              pH: parseFloat(nextPH.toFixed(2)),
-              ec: parseFloat(nextEC.toFixed(2)),
-              tds: Math.round(nextEC * 640),
-            };
-          });
-
-
-
-          // Intermittent timeline status logs
-          if (currentHour % 3 === 0) {
-            let logMsg = "";
-            if (scenario === "Normal Growth" && activeDeficiencies.length === 0) {
-              logMsg = "Telemetry synched: Environmental variables perfectly within botanical boundaries.";
-            } else if (activeDeficiencies.length > 0) {
-              logMsg = `PHYSIOLOGICAL DISTRESS: Active deficiency - ${activeDeficiencies.join(", ")}.`;
-            }
-
-            if (logMsg && logMsg !== lastRoutineLogRef.current) {
-              lastRoutineLogRef.current = logMsg;
-              setTimeline((prevLogs) => [
-                ...prevLogs,
-                `[${clockLabel}] ${logMsg}`
-              ]);
-            }
-          }
-        }
-
-        return nextMin;
-      });
+      handleTimeJump(warpFactor * 2);
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [isRunning, scenario, reservoir, metrics, environmentalStats, autoCorrect, nutrients, activeDeficiencies, turbidity]);
+  }, [isRunning, warpFactor, handleTimeJump]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%', overflow: 'hidden' }} className="text-slate-100 font-mono text-sm antialiased selection:bg-[#a3e635] selection:text-slate-950 bg-[#090a0f]">
