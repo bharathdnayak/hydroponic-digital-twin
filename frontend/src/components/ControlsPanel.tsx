@@ -38,6 +38,8 @@ interface ControlsPanelProps {
   onTimeJump: (hours: number) => void;
   warpFactor: number;
   onWarpFactorChange: (factor: number) => void;
+  tankVolume: number;
+  onTankVolumeChange: (vol: number) => void;
 }
 
 export default function ControlsPanel({
@@ -72,8 +74,10 @@ export default function ControlsPanel({
   onTimeJump,
   warpFactor,
   onWarpFactorChange,
+  tankVolume,
+  onTankVolumeChange,
 }: ControlsPanelProps) {
-  const [controlTab, setControlTab] = useState<"Scenarios" | "Tuning" | "Nutrients" | "Days">("Scenarios");
+  const [controlTab, setControlTab] = useState<"Scenarios" | "Tuning" | "Nutrients" | "Days" | "Tank">("Scenarios");
   const [expandedNutrientSec, setExpandedNutrientSec] = useState<"macro" | "micro" | "fertilizers" | "additives">("macro");
 
   const renderNutrientInput = (
@@ -229,50 +233,62 @@ export default function ControlsPanel({
       </div>
 
       {/* Control Tabs Toggle */}
-      <div className="grid grid-cols-2 gap-1.5 bg-slate-950 p-1.5 rounded-lg border border-slate-900" id="tabs-toggle">
+      <div className="grid grid-cols-5 gap-1 bg-slate-950 p-1.5 rounded-lg border border-slate-900" id="tabs-toggle">
         <button
           onClick={() => setControlTab("Scenarios")}
-          className={`py-2 px-2.5 rounded-md text-xs font-black uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+          className={`py-2 px-1 rounded-md text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center gap-1 ${
             controlTab === "Scenarios"
               ? "bg-[#a3e635] text-slate-950 shadow-md"
               : "text-slate-450 hover:text-slate-200"
           }`}
         >
-          <Settings2 className="w-3.5 h-3.5" />
-          <span>Scenarios</span>
+          <Settings2 className="w-3 h-3" />
+          <span>Scenes</span>
         </button>
         <button
           onClick={() => setControlTab("Tuning")}
-          className={`py-2 px-2.5 rounded-md text-xs font-black uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+          className={`py-2 px-1 rounded-md text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center gap-1 ${
             controlTab === "Tuning"
               ? "bg-[#a3e635] text-slate-950 shadow-md"
               : "text-slate-450 hover:text-slate-200"
           }`}
         >
-          <Sliders className="w-3.5 h-3.5" />
+          <Sliders className="w-3 h-3" />
           <span>Climate</span>
         </button>
         <button
           onClick={() => setControlTab("Nutrients")}
-          className={`py-2 px-2.5 rounded-md text-xs font-black uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+          className={`py-2 px-1 rounded-md text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center gap-1 ${
             controlTab === "Nutrients"
               ? "bg-[#a3e635] text-slate-950 shadow-md"
               : "text-slate-450 hover:text-slate-200"
           }`}
         >
-          <Database className="w-3.5 h-3.5" />
+          <Database className="w-3 h-3" />
           <span>Nutrients</span>
         </button>
         <button
           onClick={() => setControlTab("Days")}
-          className={`py-2 px-2.5 rounded-md text-xs font-black uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+          className={`py-2 px-1 rounded-md text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center gap-1 ${
             controlTab === "Days"
               ? "bg-[#a3e635] text-slate-950 shadow-md"
               : "text-slate-450 hover:text-slate-200"
           }`}
         >
-          <span className="text-[11px]">📅</span>
-          <span>Days & Age</span>
+          <span className="text-[10px]">📅</span>
+          <span>Days</span>
+        </button>
+        <button
+          onClick={() => setControlTab("Tank")}
+          className={`py-2 px-1 rounded-md text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center gap-1 ${
+            controlTab === "Tank"
+              ? "bg-cyan-400 text-slate-950 shadow-md"
+              : "text-slate-450 hover:text-slate-200"
+          }`}
+          id="tab-tank-btn"
+        >
+          <span className="text-[10px]">🪣</span>
+          <span>Tank</span>
         </button>
       </div>
 
@@ -1040,6 +1056,177 @@ export default function ControlsPanel({
           </div>
         </div>
       </div>
+
+      {/* ═══ TANK SETUP TAB ═══ */}
+      {controlTab === "Tank" && (
+        <div className="flex flex-col space-y-3 overflow-y-auto flex-grow pr-1" id="tab-tank-panel">
+
+          {/* Tank Volume Input */}
+          <div className="bg-[#12141c]/80 border border-cyan-900/40 rounded-lg p-4 flex flex-col space-y-3 shrink-0">
+            <div className="flex items-center justify-between border-b border-slate-900 pb-2.5">
+              <span className="text-xs text-cyan-400 font-extrabold uppercase tracking-wider flex items-center gap-1.5">
+                🪣 Tank Volume Setup
+              </span>
+              <span className="text-[10px] text-slate-400 font-bold bg-cyan-950/30 border border-cyan-900/30 px-2 py-0.5 rounded">
+                {tankVolume} L capacity
+              </span>
+            </div>
+
+            {/* Volume Slider */}
+            <div className="flex flex-col space-y-2">
+              <div className="flex justify-between text-xs font-bold px-0.5">
+                <span className="text-slate-400">Water Tank Volume</span>
+                <span className="text-cyan-300 font-black">{tankVolume} Litres</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <button
+                  type="button"
+                  onClick={() => onTankVolumeChange(Math.max(10, tankVolume - 5))}
+                  className="w-6 h-6 rounded bg-slate-950 hover:bg-slate-900 border border-slate-800 text-slate-400 hover:text-white flex items-center justify-center font-black text-xs cursor-pointer active:scale-90 transition-all"
+                >−</button>
+                <input
+                  type="range"
+                  min={10}
+                  max={500}
+                  step={5}
+                  value={tankVolume}
+                  onChange={(e) => onTankVolumeChange(parseInt(e.target.value))}
+                  className="flex-1 h-1.5 bg-slate-950 border border-slate-900/60 rounded-lg appearance-none cursor-pointer accent-cyan-400"
+                  id="slider-tank-volume"
+                />
+                <button
+                  type="button"
+                  onClick={() => onTankVolumeChange(Math.min(500, tankVolume + 5))}
+                  className="w-6 h-6 rounded bg-slate-950 hover:bg-slate-900 border border-slate-800 text-slate-400 hover:text-white flex items-center justify-center font-black text-xs cursor-pointer active:scale-90 transition-all"
+                >+</button>
+              </div>
+              {/* Quick presets */}
+              <div className="flex gap-1 flex-wrap pt-1">
+                {[20, 50, 100, 200, 300].map((v) => (
+                  <button
+                    key={v}
+                    onClick={() => onTankVolumeChange(v)}
+                    className={`px-2 py-1 rounded text-[9px] font-black uppercase transition-all cursor-pointer ${
+                      tankVolume === v
+                        ? "bg-cyan-400 text-slate-950"
+                        : "bg-slate-900 border border-slate-800 text-slate-400 hover:text-white hover:border-cyan-800"
+                    }`}
+                  >
+                    {v}L
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Summary bar */}
+            <div className="grid grid-cols-3 gap-2 text-center bg-slate-950/40 rounded-lg p-2 border border-slate-900">
+              <div className="flex flex-col">
+                <span className="text-[9px] text-slate-500 uppercase font-bold">Expected TDS</span>
+                <span className="text-xs font-black text-white">~900 ppm</span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[9px] text-slate-500 uppercase font-bold">Expected EC</span>
+                <span className="text-xs font-black text-white">~1.40 mS/cm</span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[9px] text-slate-500 uppercase font-bold">Target pH</span>
+                <span className="text-xs font-black text-cyan-300">6.0 – 6.5</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Calculated Dosing Amounts */}
+          <div className="bg-[#12141c]/80 border border-cyan-900/40 rounded-lg p-4 flex flex-col space-y-3">
+            <div className="flex items-center justify-between border-b border-slate-900 pb-2.5">
+              <span className="text-xs text-cyan-400 font-extrabold uppercase tracking-wider">
+                📐 Calculated Dosing — for {tankVolume} L
+              </span>
+              <span className="text-[9px] text-slate-500 font-bold italic">auto-scaled from recipe</span>
+            </div>
+
+            {/* Dry Salts */}
+            <div className="flex flex-col space-y-1.5">
+              <span className="text-[9px] text-slate-500 uppercase font-extrabold tracking-widest border-b border-slate-900/60 pb-1">
+                🧂 Dry Salt Fertilizers (grams to dissolve)
+              </span>
+              {[
+                { label: "Calcium Nitrate",    key: "calciumNitrate" as const,         color: "text-blue-400" },
+                { label: "Potassium Nitrate",   key: "potassiumNitrate" as const,       color: "text-yellow-400" },
+                { label: "MAP (Phosphorus)",    key: "monoammoniumPhosphate" as const,  color: "text-purple-400" },
+                { label: "Epsom Salts",         key: "epsomSalts" as const,             color: "text-pink-400" },
+                { label: "Iron Chelate (DTPA)", key: "ironChelate" as const,            color: "text-orange-400" },
+                { label: "Trace Blend",         key: "traceMicronutrientBlend" as const,color: "text-teal-400" },
+              ].map(({ label, key, color }) => {
+                const perHundred = nutrients[key] as number;
+                const forTank = parseFloat(((perHundred / 100) * tankVolume).toFixed(2));
+                return (
+                  <div key={key} className="flex items-center justify-between text-xs bg-slate-950/30 px-2.5 py-1.5 rounded border border-slate-900/50">
+                    <span className="text-slate-400 font-bold">{label}</span>
+                    <div className="flex items-center gap-1.5">
+                      <span className={`font-black ${color}`}>{forTank} g</span>
+                      <span className="text-slate-600 text-[9px] font-bold">({perHundred} g/100L)</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Liquid Additives */}
+            <div className="flex flex-col space-y-1.5">
+              <span className="text-[9px] text-slate-500 uppercase font-extrabold tracking-widest border-b border-slate-900/60 pb-1">
+                🧪 Liquid Additives (mL to add)
+              </span>
+              {[
+                { label: "Phosphoric Acid (pH↓)",  key: "phosphoricAcid" as const,           color: "text-red-400" },
+                { label: "Nitric Acid (pH↓ alt)",  key: "nitricAcid" as const,               color: "text-sky-400" },
+                { label: "KOH (pH↑)",              key: "potassiumHydroxide" as const,        color: "text-amber-400" },
+                { label: "Bacillus amyloliq.",      key: "bacillusAmyloliquefaciens" as const, color: "text-emerald-400" },
+                { label: "Hypochlorous Acid",       key: "hypochlorousAcid" as const,          color: "text-indigo-400" },
+              ].map(({ label, key, color }) => {
+                const perHundred = nutrients[key] as number;
+                const forTank = parseFloat(((perHundred / 100) * tankVolume).toFixed(2));
+                return (
+                  <div key={key} className="flex items-center justify-between text-xs bg-slate-950/30 px-2.5 py-1.5 rounded border border-slate-900/50">
+                    <span className="text-slate-400 font-bold">{label}</span>
+                    <div className="flex items-center gap-1.5">
+                      <span className={`font-black ${color}`}>{forTank} mL</span>
+                      <span className="text-slate-600 text-[9px] font-bold">({perHundred} mL/100L)</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Elemental Result Summary */}
+            <div className="flex flex-col space-y-1.5">
+              <span className="text-[9px] text-slate-500 uppercase font-extrabold tracking-widest border-b border-slate-900/60 pb-1">
+                ⚗️ Resulting Concentrations (same regardless of tank size)
+              </span>
+              <div className="grid grid-cols-3 gap-1 text-[10px]">
+                {[
+                  { label: "N",   val: nutrients.nitrogen,  unit: "ppm", color: "bg-blue-950/40 border-blue-900/40 text-blue-300" },
+                  { label: "P",   val: nutrients.phosphorus, unit: "ppm", color: "bg-purple-950/40 border-purple-900/40 text-purple-300" },
+                  { label: "K",   val: nutrients.potassium, unit: "ppm", color: "bg-yellow-950/40 border-yellow-900/40 text-yellow-300" },
+                  { label: "Ca",  val: nutrients.calcium,   unit: "ppm", color: "bg-red-950/40 border-red-900/40 text-red-300" },
+                  { label: "Mg",  val: nutrients.magnesium, unit: "ppm", color: "bg-pink-950/40 border-pink-900/40 text-pink-300" },
+                  { label: "S",   val: nutrients.sulfur,    unit: "ppm", color: "bg-teal-950/40 border-teal-900/40 text-teal-300" },
+                ].map(({ label, val, unit, color }) => (
+                  <div key={label} className={`flex flex-col items-center p-1.5 rounded border ${color}`}>
+                    <span className="font-black text-[11px]">{val}</span>
+                    <span className="text-[8px] opacity-70">{label} {unit}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Important note */}
+            <div className="bg-cyan-950/20 border border-cyan-900/30 rounded px-3 py-2 text-[10px] text-cyan-400 font-bold leading-relaxed">
+              💡 ppm concentrations stay the same regardless of tank size. Only the grams and mL amounts scale with tank volume. The simulation reservoir volume is now set to <span className="text-white">{tankVolume} L</span>.
+            </div>
+          </div>
+
+        </div>
+      )}
 
     </div>
   );

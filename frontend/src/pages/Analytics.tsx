@@ -51,6 +51,7 @@ export default function Analytics() {
   const [autoCorrect, setAutoCorrect] = useState<boolean>(false);
   const [simMinutes, setSimMinutes] = useState<number>(0);
   const [turbidity, setTurbidity] = useState<number>(4.2);
+  const [tankVolume, setTankVolume] = useState<number>(50); // actual tank capacity in litres
 
   // Accumulators
   const [waterUptake, setWaterUptake] = useState<number>(1.0);
@@ -77,8 +78,8 @@ export default function Analytics() {
 
   // Reservoir States
   const [reservoir, setReservoir] = useState<ReservoirStats>({
-    volume: 95.0,
-    maxVolume: 100.0,
+    volume: 47.5,          // 95% of 50 L tank
+    maxVolume: 50.0,
     ec: 1.4,
     tds: 900,
     pH: 6.00,
@@ -859,6 +860,16 @@ export default function Analytics() {
               onTimeJump={handleTimeJump}
               warpFactor={warpFactor}
               onWarpFactorChange={setWarpFactor}
+              tankVolume={tankVolume}
+              onTankVolumeChange={(vol: number) => {
+                setTankVolume(vol);
+                // Update reservoir to match new tank physical capacity
+                setReservoir((prev) => ({
+                  ...prev,
+                  maxVolume: vol,
+                  volume: Math.min(prev.volume, vol * 0.95),
+                }));
+              }}
             />
           </div>
         </section>
