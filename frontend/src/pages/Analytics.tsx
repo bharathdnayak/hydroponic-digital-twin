@@ -48,7 +48,7 @@ export default function Analytics() {
   const [realTime, setRealTime] = useState<boolean>(true);
   const [warpFactor, setWarpFactor] = useState<number>(1);
   const [autoCorrect, setAutoCorrect] = useState<boolean>(false);
-  const [simMinutes, setSimMinutes] = useState<number>(0);
+  const [simMinutes, setSimMinutes] = useState<number>(14 * 1440);
   const [turbidity, setTurbidity] = useState<number>(4.2);
 
   // Accumulators
@@ -117,7 +117,7 @@ export default function Analytics() {
 
 
   const timelineEndRef = useRef<HTMLDivElement>(null);
-  const prevHourRef = useRef<number>(0);
+  const prevHourRef = useRef<number>(14 * 24);
   const lastRoutineLogRef = useRef<string>("");
 
   // Auto-scroll timeline logs
@@ -298,6 +298,7 @@ export default function Analytics() {
         health: 100,
         growthRate: 2.1,
       }));
+      setSimMinutes(0);
       setTimeline((prev) => [...prev, `[${clockLabel}] Sprout initialized: Lettuce re-seeded at Germination stage.`]);
     } else if (stage === "Seedling") {
       setMetrics((prev) => ({
@@ -312,6 +313,7 @@ export default function Analytics() {
         health: 100,
         growthRate: 1.95,
       }));
+      setSimMinutes(5 * 1440);
       setTimeline((prev) => [...prev, `[${clockLabel}] Stage shifted: Root expansion active. Seedling initialized.`]);
     } else if (stage === "Vegetative") {
       setMetrics((prev) => ({
@@ -326,6 +328,7 @@ export default function Analytics() {
         health: 98,
         growthRate: 1.80,
       }));
+      setSimMinutes(14 * 1440);
       setTimeline((prev) => [...prev, `[${clockLabel}] Stage shifted: Core canopy photosynthesis engaged. Vegetative initialized.`]);
     } else if (stage === "Mature") {
       setMetrics((prev) => ({
@@ -340,6 +343,7 @@ export default function Analytics() {
         health: 98,
         growthRate: 1.25,
       }));
+      setSimMinutes(28 * 1440);
       setTimeline((prev) => [...prev, `[${clockLabel}] Stage shifted: Crown packing dense rosette leaves. Mature stage initialized.`]);
     }
   };
@@ -412,6 +416,8 @@ export default function Analytics() {
       growthRate: parseFloat(growthRate.toFixed(2)),
     }));
 
+    setSimMinutes(Math.round(newAge * 1440));
+
     const clockLabel = formattedClock;
     setTimeline((prev) => [
       ...prev,
@@ -476,10 +482,10 @@ export default function Analytics() {
 
   // Reset Simulation
   const handleReset = () => {
-    setSimMinutes(0);
+    setSimMinutes(14 * 1440);
     setWaterUptake(1.0);
     setNutrientsFed(0.0);
-    prevHourRef.current = 0;
+    prevHourRef.current = 14 * 24;
     lastRoutineLogRef.current = "";
     
     // Reset reservoir stats
@@ -556,7 +562,7 @@ export default function Analytics() {
         // 1. Hourly Biology Update
         let nextHealth = tempMetrics.health;
         let healthDelta = 0.5;
-        const nextAge = tempMetrics.age + 0.04;
+        const nextAge = tempMetrics.age + 1 / 24;
 
         if (nextAge > 70) {
           healthDelta -= (nextAge - 70) * 0.15;
