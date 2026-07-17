@@ -1,14 +1,11 @@
 import { useState, useEffect, useMemo, useRef } from "react";
-import { Leaf, Activity, BrainCircuit } from "lucide-react";
+import { Leaf, Activity } from "lucide-react";
 import ControlsPanel from "../components/ControlsPanel";
 import PlantVisualizer from "../components/PlantVisualizer";
 import TelemetryPanel from "../components/TelemetryPanel";
-import DiagnosticsPanel from "../components/DiagnosticsPanel";
-import ChatPanel from "../components/ChatPanel";
-import type { LettuceEnvironmentalStats, ReservoirStats, LettuceMetrics, TelemetryPoint, ChatMessage, DiagnosticReport, NutrientSolution } from "../types";
+import type { LettuceEnvironmentalStats, ReservoirStats, LettuceMetrics, TelemetryPoint, NutrientSolution } from "../types";
 import { assessLettuceConditions, LETTUCE_REFERENCE_RECIPE } from "../lib/lettuceModel";
 
-const BACKEND_URL = "http://localhost:3001";
 
 const getTimelineProgressPercent = (age: number): number => {
   if (age <= 0) return 0;
@@ -96,22 +93,7 @@ export default function Analytics() {
   ]);
 
   // Active Workspace Tab
-  const [activeTab, setActiveTab] = useState<"twin" | "analytics" | "ai">("twin");
-
-  // AI Diagnostic States
-  const [diagnosticReport, setDiagnosticReport] = useState<DiagnosticReport | null>(null);
-  const [diagnosticsLoading, setDiagnosticsLoading] = useState<boolean>(false);
-
-  // Chat States
-  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
-    {
-      id: "1",
-      sender: "twin",
-      text: "Hello caretaker! I am ruffling my leaves and photosynthesizing happily. Ask me anything about my roots, nutrient appetite, or climate stress!",
-      timestamp: "00:00"
-    }
-  ]);
-  const [chatLoading, setChatLoading] = useState<boolean>(false);
+  const [activeTab, setActiveTab] = useState<"twin" | "analytics">("twin");
 
   const timelineEndRef = useRef<HTMLDivElement>(null);
   const prevHourRef = useRef<number>(0);
@@ -160,83 +142,7 @@ export default function Analytics() {
     return issues;
   }, [nutrients]);
 
-  // AI Diagnostic Probe API
-  const handleTriggerDiagnostics = async () => {
-    setDiagnosticsLoading(true);
-    try {
-      const res = await fetch(`${BACKEND_URL}/api/diagnose`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          species: cropType,
-          growthStage,
-          environmentalStats,
-          reservoir,
-          pumpRunning: environmentalStats.flowRate > 0,
-          plantMetrics: metrics,
-          nutrients,
-        }),
-      });
-      const data = await res.json();
-      setDiagnosticReport(data);
-    } catch (error) {
-      console.error("Diagnosis fetch error:", error);
-    } finally {
-      setDiagnosticsLoading(false);
-    }
-  };
 
-  // Chat API call
-  const handleSendMessage = async (text: string) => {
-    const userMsg: ChatMessage = {
-      id: Date.now().toString(),
-      sender: "user",
-      text,
-      timestamp: formattedClock,
-    };
-    setChatMessages((prev) => [...prev, userMsg]);
-    setChatLoading(true);
-
-    try {
-      const res = await fetch(`${BACKEND_URL}/api/chat`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          messages: [...chatMessages, userMsg].map((m) => ({
-            role: m.sender === "user" ? "user" : "model",
-            content: m.text,
-          })),
-          context: {
-            growthStage,
-            reservoir,
-            environmentalStats,
-            pumpRunning: environmentalStats.flowRate > 0,
-            plantMetrics: metrics,
-            nutrients,
-          },
-        }),
-      });
-      const data = await res.json();
-      setChatMessages((prev) => [
-        ...prev,
-        {
-          id: (Date.now() + 1).toString(),
-          sender: "twin",
-          text: data.reply,
-          timestamp: formattedClock,
-        },
-      ]);
-    } catch (error) {
-      console.error("Chat fetch error:", error);
-    } finally {
-      setChatLoading(false);
-    }
-  };
-
-  // Auto-Diagnostics Trigger on parameter/scenario changes
-  useEffect(() => {
-    handleTriggerDiagnostics();
-  }, [scenario, growthStage, cropType, nutrients]);
 
   // Handle Nutrient Sliders Change
   const handleNutrientChange = (key: keyof NutrientSolution, val: number) => {
@@ -532,9 +438,6 @@ export default function Analytics() {
       ...prev,
       `[${clockLabel}] Manual dosing: Injected 50 mL concentrated macronutrients. EC increased by +0.15 mS/cm.`
     ]);
-    setTimeout(() => {
-      handleTriggerDiagnostics();
-    }, 150);
   };
 
   // Manual water refill
@@ -548,9 +451,6 @@ export default function Analytics() {
       ...prev,
       `[${clockLabel}] Reservoir top-off: Replenished water level back to 95.0 Liters.`
     ]);
-    setTimeout(() => {
-      handleTriggerDiagnostics();
-    }, 150);
   };
 
   // Reset Simulation
@@ -1119,18 +1019,6 @@ export default function Analytics() {
                 <Activity className="w-4.5 h-4.5" />
                 <span>Analytics & Plots</span>
               </button>
-              <button
-                onClick={() => setActiveTab("ai")}
-                className={`px-5.5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-3 transition-all cursor-pointer ${
-                  activeTab === "ai"
-                    ? "bg-[#a3e635] text-slate-950 shadow-md font-black"
-                    : "text-slate-400 hover:text-slate-200"
-                }`}
-                id="btn-tab-ai"
-              >
-                <BrainCircuit className="w-4.5 h-4.5" />
-                <span>AI Diagnostics & Chat</span>
-              </button>
             </div>
 
             {/* High density specs readout right aligned */}
@@ -1171,8 +1059,6 @@ export default function Analytics() {
                     id="select-crop-type-center"
                   >
                     <option value="Lettuce">Green Coral Lettuce (L. sativa)</option>
-                    <option value="Basil">Genovese Sweet Basil (O. basilicum)</option>
-                    <option value="Spinach">Bloomsdale Spinach (S. oleracea)</option>
                   </select>
                 </div>
 
@@ -1635,31 +1521,6 @@ export default function Analytics() {
                 currentWaterTemp={environmentalStats.waterTemp}
                 currentHealth={metrics.health}
               />
-            </div>
-          )}
-
-          {/* TAB CONTENT: 3. AI DIAGNOSTICS & CHAT */}
-          {activeTab === "ai" && (
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 min-h-0 flex-1 overflow-hidden animate-fade-in" id="tab-ai-content">
-              
-              {/* AI Diagnostics Panel */}
-              <div className="lg:col-span-5 flex flex-col min-h-0 h-full" id="ai-diagnostics-card">
-                <DiagnosticsPanel
-                  report={diagnosticReport}
-                  onTriggerDiagnostics={handleTriggerDiagnostics}
-                  loading={diagnosticsLoading}
-                />
-              </div>
-
-              {/* Caretaker Terminal Chat */}
-              <div className="lg:col-span-7 flex flex-col min-h-0 h-full" id="ai-chat-card">
-                <ChatPanel
-                  messages={chatMessages}
-                  onSendMessage={handleSendMessage}
-                  loading={chatLoading}
-                />
-              </div>
-
             </div>
           )}
 
