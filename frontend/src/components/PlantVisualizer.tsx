@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import type { LettuceEnvironmentalStats, LettuceMetrics } from "../types";
 
 interface PlantVisualizerProps {
@@ -17,12 +17,25 @@ export default function PlantVisualizer({
   onHarvest,
   animationSpeed = 1,
 }: PlantVisualizerProps) {
+  const [zoom, setZoom] = useState(1.0);
   const scaledSpeed = Math.sqrt(animationSpeed);
   const { ledIntensity, flowRate, waterTemp, airTemp } = stats;
   const { stage, health, leafCount, rootLength } = metrics;
 
   const isDead = health <= 5 || metrics.age > 88;
   const swayAnimationSpeed = isDead ? 0.001 : scaledSpeed;
+
+  // Center of interest is the plant rosette (x=200, y=240)
+  const viewBoxString = useMemo(() => {
+    if (zoom === 1.0) return "0 0 400 400";
+    const width = 400 / zoom;
+    const height = 400 / zoom;
+    const centerX = 200;
+    const centerY = 230; // center slightly above the lid to showcase the foliage
+    const minX = Math.max(0, Math.min(400 - width, centerX - width / 2));
+    const minY = Math.max(0, Math.min(400 - height, centerY - height / 2));
+    return `${minX} ${minY} ${width} ${height}`;
+  }, [zoom]);
 
   // 1. Dynamic Leaf Colors based on health and age
   const leafColor = useMemo(() => {
@@ -165,10 +178,33 @@ export default function PlantVisualizer({
       {/* Visual background lines */}
       <div className="absolute inset-0 bg-[radial-gradient(#10b9810b_1px,transparent_1px)] [background-size:12px_12px] pointer-events-none opacity-40" />
 
+      {/* Floating Zoom Controls */}
+      <div className="absolute top-2 right-2 flex gap-1 z-10">
+        <button
+          type="button"
+          onClick={() => setZoom(z => Math.max(1.0, parseFloat((z - 0.25).toFixed(2))))}
+          className="w-5 h-5 rounded bg-slate-900/80 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white flex items-center justify-center text-xs cursor-pointer select-none font-black active:scale-90 transition-all"
+          title="Zoom Out"
+        >
+          -
+        </button>
+        <span className="bg-slate-900/80 border border-slate-800 text-slate-400 text-[8px] font-mono font-black px-1.5 rounded flex items-center justify-center select-none min-w-[32px]">
+          {Math.round(zoom * 100)}%
+        </span>
+        <button
+          type="button"
+          onClick={() => setZoom(z => Math.min(2.5, parseFloat((z + 0.25).toFixed(2))))}
+          className="w-5 h-5 rounded bg-slate-900/80 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white flex items-center justify-center text-xs cursor-pointer select-none font-black active:scale-90 transition-all"
+          title="Zoom In"
+        >
+          +
+        </button>
+      </div>
+
       {/* Main SVG Render Stage */}
       <svg
-        viewBox="0 0 400 400"
-        className="w-full h-full max-h-[220px] z-0"
+        viewBox={viewBoxString}
+        className="w-full h-full max-h-[220px] z-0 transition-all duration-300 ease-out"
         id="lettuce-svg-stage"
       >
         <defs>
