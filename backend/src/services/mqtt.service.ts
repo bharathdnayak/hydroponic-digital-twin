@@ -3,11 +3,12 @@ import { Server } from 'socket.io';
 import { twinEngine } from './twin.service';
 
 export function initMqttService(io: Server) {
-  // Connect to the embedded Aedes broker
-  const client = mqtt.connect('mqtt://127.0.0.1:1883', { clientId: 'backend_ingestion_service' });
+  // Connect to the embedded Aedes broker dynamically
+  const mqttPort = process.env.MQTT_PORT || '1884';
+  const client = mqtt.connect(`mqtt://127.0.0.1:${mqttPort}`, { clientId: 'backend_ingestion_service' });
 
     client.on('connect', () => {
-      console.log('MQTT Service: Connected to broker at 127.0.0.1:1883');
+      console.log(`MQTT Service: Connected to broker at 127.0.0.1:${mqttPort}`);
       
       // Subscribe to all topics under hydroponic/live/
       client.subscribe('hydroponic/live/#', (err) => {

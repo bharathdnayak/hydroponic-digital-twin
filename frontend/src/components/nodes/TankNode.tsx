@@ -1,7 +1,7 @@
 import { Handle, Position } from 'reactflow';
 import axios from 'axios';
 
-const BACKEND_URL = 'http://localhost:3001';
+const BACKEND_URL = 'http://localhost:3002';
 
 const STATUS: Record<string, { color: string; bg: string; bar: string }> = {
   Healthy:  { color: '#22c55e', bg: 'rgba(34,197,94,0.10)',  bar: '#22c55e' },

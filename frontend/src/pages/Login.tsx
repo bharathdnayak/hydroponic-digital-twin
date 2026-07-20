@@ -31,7 +31,7 @@ export default function Login() {
   const onSubmit = async (values: FormData) => {
     setLoading(true); setError('');
     try {
-      const res = await axios.post('http://localhost:3001/api/auth/login', values);
+      const res = await axios.post('http://localhost:3002/api/auth/login', values);
       if (res.status === 200) {
         setSuccess(true);
         setTimeout(() => { window.location.href = '/'; }, 1000);

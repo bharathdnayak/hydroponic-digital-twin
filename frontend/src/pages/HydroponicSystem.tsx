@@ -4,7 +4,7 @@ import { io } from 'socket.io-client';
 import { useOutletContext } from 'react-router-dom';
 import ModelViewer from '../components/ModelViewer';
 
-const BACKEND_URL = 'http://localhost:3001';
+const BACKEND_URL = 'http://localhost:3002';
 
 export default function HydroponicSystem() {
   const { setSelectedNode } = useOutletContext<any>();

@@ -8,7 +8,7 @@ export default function LeftPanel() {
 
   useEffect(() => {
     // Fetch initial stats and alerts
-    axios.get('http://localhost:3001/api/alerts').then(res => setAlerts(res.data.slice(0, 3))).catch(console.error);
+    axios.get('http://localhost:3002/api/alerts').then(res => setAlerts(res.data.slice(0, 3))).catch(console.error);
   }, []);
 
   return (

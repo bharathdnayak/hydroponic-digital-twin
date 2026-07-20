@@ -11,7 +11,7 @@ import { useTheme } from '../ThemeProvider';
 import { io } from 'socket.io-client';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis } from 'recharts';
 
-const BACKEND_URL = 'http://localhost:3001';
+const BACKEND_URL = 'http://localhost:3002';
 
 /* ════════════════════════════════════════════════════════════════
    SIDEBAR
@@ -27,7 +27,7 @@ function Sidebar() {
   ];
 
   const logout = async () => {
-    try { await axios.post('http://localhost:3001/api/auth/logout'); } catch (_) {}
+    try { await axios.post('http://localhost:3002/api/auth/logout'); } catch (_) {}
     window.location.href = '/login';
   };
 

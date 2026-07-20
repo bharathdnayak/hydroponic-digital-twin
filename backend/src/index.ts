@@ -629,7 +629,7 @@ io.on('connection', (socket) => {
   });
 });
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3002;
 httpServer.listen(PORT, () => {
   console.log(`Backend server running on http://localhost:${PORT}`);
 });
@@ -637,7 +637,7 @@ httpServer.listen(PORT, () => {
 // MQTT Broker Setup
 const { Aedes } = require('aedes');
 const mqttServerFactory = require('aedes-server-factory');
-const MQTT_PORT = 1883;
+const MQTT_PORT = process.env.MQTT_PORT ? parseInt(process.env.MQTT_PORT) : 1884;
 
 import { twinEngine } from './services/twin.service';
 import { alertEngine } from './services/alert.service';

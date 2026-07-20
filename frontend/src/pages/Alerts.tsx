@@ -11,7 +11,7 @@ export default function Alerts() {
     // Fetch historical alerts
     const fetchAlerts = async () => {
       try {
-        const res = await axios.get('http://localhost:3001/api/alerts');
+        const res = await axios.get('http://localhost:3002/api/alerts');
         setAlerts(res.data);
       } catch (err) {
         console.error('Failed to fetch alerts:', err);
@@ -22,7 +22,7 @@ export default function Alerts() {
     fetchAlerts();
 
     // Listen for real-time alerts
-    const socket: Socket = io('http://localhost:3001', {
+    const socket: Socket = io('http://localhost:3002', {
       transports: ['websocket'],
     });
 
